@@ -1,6 +1,9 @@
-# picolisp-mode
+# picolisp-mode - major mode for PicoLisp programming
 
-`picolisp-mode` provides an Emacs major mode for programming in [PicoLisp](http://picolisp.com/wiki/?home).
+*Author:* Alexis <flexibeast@gmail.com><br>
+*URL:* [https://github.com/flexibeast/picolisp-mode](https://github.com/flexibeast/picolisp-mode)<br>
+
+`picolisp-mode` provides a major mode for PicoLisp programming.
 
 ## Table of Contents
 
@@ -20,7 +23,7 @@
 
 ## Installation
 
-Put the `picolisp-mode` folder in your load-path and do a `(require 'picolisp-mode)`.
+Install [picolisp-mode from MELPA](http://melpa.org/#/picolisp-mode), or put the `picolisp-mode` folder in your load-path and do a `(require 'picolisp-mode)`.
 
 ## Usage
 
@@ -51,3 +54,7 @@ please create a new issue with as much detail as possible, including:
 ## License
 
 [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html), or (at your option) any later version.
+
+
+---
+Converted from `picolisp-mode.el` by [*el2markdown*](https://github.com/Lindydancer/el2markdown).
