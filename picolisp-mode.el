@@ -28,7 +28,7 @@
 
 ;;; Commentary:
 
-;; `picolisp-mode` provides a major mode for PicoLisp programming.
+;; `picolisp-mode' provides a major mode for PicoLisp programming.
 
 ;; ## Table of Contents
 
@@ -40,41 +40,46 @@
 
 ;; ## Features
 
-;; * Syntax highlighting of PicoLisp code.
+;; * Syntax highlighting of PicoLisp code. (But please read the below [note on syntax highlighting](#note).)
 
-;; * Comint-based `pil` REPL buffers.
+;; * Comint-based `pil' REPL buffers.
 
-;; * Quick access to documentation for function at point.
+;; * Quick access to documentation for symbol at point.
 
 ;; ## Installation
 
-;; Install [picolisp-mode from MELPA](http://melpa.org/#/picolisp-mode), or put the `picolisp-mode` folder in your load-path and do a `(require 'picolisp-mode)`.
+;; Install [picolisp-mode from MELPA](http://melpa.org/#/picolisp-mode), or put the `picolisp-mode' folder in your load-path and do a `(require 'picolisp-mode)'.
 
 ;; ## Usage
 
-;; Enable syntax highlighting for a PicoLisp source buffer with `M-x picolisp-mode`.
+;; Enable syntax highlighting for a PicoLisp source buffer with `M-x picolisp-mode'. 
 
-;; Start a `pil` REPL session with `M-x picolisp-repl`.
+;; Start a `pil' REPL session with `M-x picolisp-repl'.
 
-;; Access documentation for the function at point with `C-c C-f` (`picolisp-describe-function`). The browser used by `pil` is specified by the variable `picolisp-browser`. By default, it is set to the `eww` helper shell script in the `picolisp-mode` source directory, which opens an `eww` buffer via `emacsclient`. If you're using a pre-24.4 version of Emacs (and thus don't have `eww` available), or don't want to run an Emacs daemon/server, you can set `picolisp-browser` to any other HTML browser on your system, e.g. `/usr/bin/iceweasel`.
+;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `'picolisp-display-documentation`; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
 
-;; Various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.
+;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
 
+;; <a name="note"></a>
+
+;; ### A note on syntax highlighting
+
+;; PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for [good reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However, some - such as the author of this package! - feel that, even taking such issues into consideration, the benefits can outweigh the costs. (For example, when learning PicoLisp, it can be useful to get immediate visual feedback about unintentionally redefining a PicoLisp 'builtin'.) To accommodate both views, syntax highlighting can be enabled or disabled via the `picolisp-syntax-highlighting-p' variable; by default, it is set to `t' (enabled).
 ;; <a name="issues"></a>
 
 ;; ## Issues / bugs
 
-;; If you discover an issue or bug in `picolisp-mode` not already noted:
+;; If you discover an issue or bug in `picolisp-mode' not already noted:
 
 ;; * as a TODO item, or
 
-;; * in [the project's 'Issues' section on GitHub](https://github.com/flexibeast/picolisp-mode/issues),
+;; * in [the project's "Issues" section on GitHub](https://github.com/flexibeast/picolisp-mode/issues),
 
 ;; please create a new issue with as much detail as possible, including:
 
 ;; * which version of Emacs you're running on which operating system, and
 
-;; * how you installed `picolisp-mode`.
+;; * how you installed `picolisp-mode'.
 
 ;; ## License
 
