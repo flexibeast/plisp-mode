@@ -101,14 +101,25 @@
   :type '(file :must-match t)
   :group 'picolisp)
 
-(defcustom picolisp-browser (concat (file-name-directory load-file-name) "eww.sh")
-  "Absolute path of the preferred Web browser."
-  :type '(file :must-match t)
+(defcustom picolisp-documentation-directory "/usr/share/doc/picolisp/doc/"
+  "Absolute path of the PicoLisp HTML documentation directory."
+  :type 'directory
+  :group 'picolisp)
+
+(defcustom picolisp-documentation-method 'picolisp-display-documentation
+  "System to be used to display PicoLisp documentation."
+  :type '(radio (function :tag "Function - must already be defined" :value 'picolisp-display-documentation)
+                (file :tag "HTML browser - absolute path" :value "/usr/bin/lynx"))
   :group 'picolisp)
 
 (defcustom picolisp-repl-debug-p t
   "Whether to enable debug mode in the REPL.
-Must be `t' to access documentation via `picolisp-describe-function'."
+Must be `t' to access documentation via `picolisp-describe-symbol'."
+  :type 'boolean
+  :group 'picolisp)
+
+(defcustom picolisp-syntax-highlighting-p t
+  "Whether to enable syntax highlighting."
   :type 'boolean
   :group 'picolisp)
 
@@ -283,20 +294,76 @@ Must be `t' to access documentation via `picolisp-describe-function'."
 
 
 ;;
+;; Internal functions.
+;;
+
+(defmacro picolisp-dolist-pairs (spec &rest body)
+  "Loop over a list.
+Evaluate BODY with VAR1 bound to each car from LIST, and VAR2
+bound to each cadr from LIST, in turn.
+
+\(fn (VAR1 VAR2 LIST) BODY...)"
+  (declare (indent 1) (debug ((symbolp form &optional form) body)))
+  (let ((tmp '--dolist-pairs-tail--))
+    `(let (,(nth 0 spec)
+           ,(nth 1 spec)
+           (,tmp ,(nth 2 spec)))
+       (while ,tmp
+         (setq ,(nth 0 spec) (car ,tmp))
+         (setq ,(nth 1 spec) (cadr ,tmp))
+         ,@body
+         (setq ,tmp (cddr ,tmp))))))
+
+(defun picolisp-display-documentation (sym)
+  "Use `shr' to display documentation for symbol at point."
+  (unless (or (> emacs-major-version 24)
+              (and (= emacs-major-version 24)
+                   (> emacs-minor-version 3)))
+    (error "Emacs 24.4 or greater required"))
+  (let* ((char (progn
+                 (string-match "^[[:punct:]]*\\([[:alpha:]]\\)" sym)
+                 (upcase (match-string 1 sym))))
+         (doc (concat picolisp-documentation-directory "ref" char ".html"))
+         (bfr (generate-new-buffer " *PicoLisp documentation source*"))
+         (dom (progn
+                (switch-to-buffer bfr)
+                (insert-file-contents doc)
+                (libxml-parse-html-region (point-min) (point-max))))
+         (dl (nth 5 (nth 3 dom))))
+    (picolisp-dolist-pairs (fst snd dl)
+      (if (eq 'dt (car-safe fst))
+          (if (string= sym (cdaadr (nth 2 fst)))
+              (progn
+                (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
+                (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
+                (shr-insert-document snd)
+                (goto-char (point-min))))))
+    (kill-buffer bfr)))
+
+
+;;
 ;; User-facing functions.
 ;;
 
-(defun picolisp-describe-function ()
-  "Display docs for symbol at point using `picolisp-browser'."
+(defun picolisp-describe-symbol ()
+  "Display documentation for symbol at point, via method
+specified by `picolisp-documentation-method'."
   (interactive)
   (let ((process-environment
-         (add-to-list 'process-environment
-                      (concat "BROWSER=" picolisp-browser)))
-        (func (symbol-name
-               (symbol-at-point))))
-    (if (member func picolisp-builtins)
-        (start-process-shell-command "picolisp-doc" nil
-                                     (concat "pil -\"doc (car (nth (argv) 3)\" -bye - '" func "' +"))
+         (if (eq 'string (type-of picolisp-documentation-method))
+             (add-to-list 'process-environment
+                          (concat "BROWSER=" picolisp-documentation-method))
+           process-environment))
+        (sym (symbol-name
+              (symbol-at-point))))
+    (if (member sym picolisp-builtins)
+        (cond
+         ((eq 'symbol (type-of picolisp-documentation-method))
+          (picolisp-display-documentation sym))
+         ((eq 'string (type-of picolisp-documentation-method))
+          (start-process-shell-command "picolisp-doc" nil
+                                       (concat "pil -\"doc (car (nth (argv) 3)\" -bye - '" sym "' +")))
+         nil)
       (message "No PicoLisp builtin at point."))))
 
 ;;;###autoload
@@ -305,8 +372,9 @@ Must be `t' to access documentation via `picolisp-describe-function'."
 
 \\{picolisp-mode-map}"
   (set-syntax-table picolisp-mode-syntax-table)
-  (setq font-lock-defaults '((picolisp-font-lock-keywords)))
-  (define-key picolisp-mode-map (kbd "C-c C-f") 'picolisp-describe-function))
+  (if picolisp-syntax-highlighting-p
+      (setq font-lock-defaults '((picolisp-font-lock-keywords))))
+  (define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol))
 
 ;;;###autoload
 (define-derived-mode picolisp-repl-mode comint-mode "PicoLisp REPL"
@@ -314,16 +382,19 @@ Must be `t' to access documentation via `picolisp-describe-function'."
 
 \\{picolisp-repl-mode-map}"
   (set-syntax-table picolisp-mode-syntax-table)
-  (setq font-lock-defaults '((picolisp-font-lock-keywords)))
-  (define-key picolisp-repl-mode-map (kbd "C-c C-f") 'picolisp-describe-function))
+  (if picolisp-syntax-highlighting-p
+      (setq font-lock-defaults '((picolisp-font-lock-keywords))))
+  (define-key picolisp-repl-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol))
 
 ;;;###autoload
 (defun picolisp-repl ()
   "Start a `pil' session in a new `picolisp-repl-mode' buffer."
   (interactive)
   (let ((process-environment
-         (add-to-list 'process-environment
-                      (concat "BROWSER=" picolisp-browser))))
+         (if (eq 'string (type-of picolisp-documentation-method))
+             (add-to-list 'process-environment
+                          (concat "BROWSER=" picolisp-documentation-method))
+           process-environment)))
     (make-comint "picolisp-repl" "pil" nil (if picolisp-repl-debug-p "+" nil))
     (switch-to-buffer "*picolisp-repl*")
     (picolisp-repl-mode)))
