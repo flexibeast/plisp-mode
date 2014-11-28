@@ -148,7 +148,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
   :group 'picolisp-faces)
 
 (defface picolisp-global-constant-face
-  '((((background light)) :foreground "blue"))
+  '((((background light)) :foreground "Purple"))
   "Face for PicoLisp global constants."
   :group 'picolisp-faces)
 
@@ -204,19 +204,19 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 ;; http://software-lab.de/doc/ref.html#conv
 
 (defvar picolisp-font-lock-keywords
-  `(("\\(\\+[a-z]\\S-*\\)"
-     (1 'picolisp-abstract-class-face))
-    (,(concat "(\\(" picolisp-builtins-regex "\\)")
+  `(("\\_<\\(T\\|NIL\\)\\_>"
+     (1 'picolisp-global-constant-face))
+    (,(concat "\\_<\\(" picolisp-builtins-regex "\\)\\_>")
      (1 'picolisp-builtin-face))
     ("\\(#.*\\)"
      (1 'picolisp-comment-face))
-    ("\\(T[^[:alpha:]]+\\|NIL\\)"
-     (1 'picolisp-global-constant-face))
+    ("\\(\\+[a-z]\\S-*\\)"
+     (1 'picolisp-abstract-class-face))
     ("\\(\\*[[:alpha:]]+\\)"
      (1 'picolisp-global-variable-face))
     ("\\(_\\S-+\\)"
      (1 'picolisp-local-function-face))
-    ("\\(\\S-+>\\s-\\)"
+    ("(\\([[:alpha:]]\\S-+>\\s-\\)"
      (1 'picolisp-method-face))
     ("\\(\\+[A-Z][[:alpha:]]*\\)"
      (1 'picolisp-normal-class-face))))
@@ -231,65 +231,122 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 ;;
 
 (defvar picolisp-mode-syntax-table
-  (let ((table (make-syntax-table))
-        (i 0))
-    
-    ;;; Symbol syntax
+  (let ((table (make-syntax-table)))
 
-    (while (< i ?0)
-      (modify-syntax-entry i "_   " table)
-      (setq i (1+ i)))
-    (setq i (1+ ?9))
-    (while (< i ?A)
-      (modify-syntax-entry i "_   " table)
-      (setq i (1+ i)))
-    (setq i (1+ ?Z))
-    (while (< i ?a)
-      (modify-syntax-entry i "_   " table)
-      (setq i (1+ i)))
-    (setq i (1+ ?z))
-    (while (< i 128)
-      (modify-syntax-entry i "_   " table)
-      (setq i (1+ i)))
+    ;;;
+    ;;; Symbol syntax.
+    ;;;
+
+    (modify-syntax-entry ?* "_   " table)
+    (modify-syntax-entry ?+ "_   " table)
+    (modify-syntax-entry ?- "_   " table)
+    (modify-syntax-entry ?: "_   " table)
+    (modify-syntax-entry ?> "_   " table)
+    (modify-syntax-entry ?< "_   " table)
     (modify-syntax-entry ?@ "_   " table)
+    (modify-syntax-entry ?A "_   " table)
+    (modify-syntax-entry ?B "_   " table)
+    (modify-syntax-entry ?C "_   " table)
+    (modify-syntax-entry ?D "_   " table)
+    (modify-syntax-entry ?E "_   " table)
+    (modify-syntax-entry ?F "_   " table)
+    (modify-syntax-entry ?G "_   " table)
+    (modify-syntax-entry ?H "_   " table)
+    (modify-syntax-entry ?I "_   " table)
+    (modify-syntax-entry ?J "_   " table)
+    (modify-syntax-entry ?K "_   " table)
+    (modify-syntax-entry ?L "_   " table)
+    (modify-syntax-entry ?M "_   " table)
+    (modify-syntax-entry ?N "_   " table)
+    (modify-syntax-entry ?O "_   " table)
+    (modify-syntax-entry ?P "_   " table)
+    (modify-syntax-entry ?Q "_   " table)
+    (modify-syntax-entry ?R "_   " table)
+    (modify-syntax-entry ?S "_   " table)
+    (modify-syntax-entry ?T "_   " table)
+    (modify-syntax-entry ?U "_   " table)
+    (modify-syntax-entry ?V "_   " table)
+    (modify-syntax-entry ?W "_   " table)
+    (modify-syntax-entry ?X "_   " table)
+    (modify-syntax-entry ?Y "_   " table)    
+    (modify-syntax-entry ?Z "_   " table)
+    (modify-syntax-entry ?a "_   " table)
+    (modify-syntax-entry ?b "_   " table)
+    (modify-syntax-entry ?c "_   " table)
+    (modify-syntax-entry ?d "_   " table)
+    (modify-syntax-entry ?e "_   " table)
+    (modify-syntax-entry ?f "_   " table)
+    (modify-syntax-entry ?g "_   " table)
+    (modify-syntax-entry ?h "_   " table)
+    (modify-syntax-entry ?i "_   " table)
+    (modify-syntax-entry ?j "_   " table)
+    (modify-syntax-entry ?k "_   " table)
+    (modify-syntax-entry ?l "_   " table)
+    (modify-syntax-entry ?m "_   " table)
+    (modify-syntax-entry ?n "_   " table)
+    (modify-syntax-entry ?o "_   " table)
+    (modify-syntax-entry ?p "_   " table)
+    (modify-syntax-entry ?q "_   " table)
+    (modify-syntax-entry ?r "_   " table)
+    (modify-syntax-entry ?s "_   " table)
+    (modify-syntax-entry ?t "_   " table)
+    (modify-syntax-entry ?u "_   " table)
+    (modify-syntax-entry ?v "_   " table)
+    (modify-syntax-entry ?w "_   " table)
+    (modify-syntax-entry ?x "_   " table)
+    (modify-syntax-entry ?y "_   " table)    
+    (modify-syntax-entry ?z "_   " table)
+    
     ;; { and } delimit external symbol names.
     (modify-syntax-entry ?\{ "_   " table)
     (modify-syntax-entry ?\} "_  " table)
+
     ;; . can be used in a symbol name, even though,
     ;; when surrounded by white space, it's
     ;; a metacharacter indicating a dotted pair.
     (modify-syntax-entry ?. "_   " table)
+
     ;; " primarily indicates a transient symbol, even
     ;; though it can also be used to indicate strings.
     (modify-syntax-entry ?\" "_    " table)
-    
-    ;;; Whitespace syntax
+
+    ;;;
+    ;;; Whitespace syntax.
+    ;;;
     
     (modify-syntax-entry ?\s "    " table)
     (modify-syntax-entry ?\x8a0 "    " table)
     (modify-syntax-entry ?\t "    " table)
     (modify-syntax-entry ?\f "    " table)
 
-    ;;; Comment syntax
+    ;;;
+    ;;; Comment syntax.
+    ;;;
     
     (modify-syntax-entry ?# "<   " table)
     (modify-syntax-entry ?\n ">   " table)
 
-    ;;; Quote syntax
+    ;;;
+    ;;; Quote syntax.
+    ;;;
     
     (modify-syntax-entry ?` "'   " table)
     (modify-syntax-entry ?' "'   " table)
     (modify-syntax-entry ?, "'   " table)
     (modify-syntax-entry ?~ "'   " table)
 
-    ;;; Parenthesis syntax
+    ;;;
+    ;;; Parenthesis syntax.
+    ;;;
     
     (modify-syntax-entry ?\( "()  " table)
     (modify-syntax-entry ?\) ")(  " table)
     (modify-syntax-entry ?\[ "(]  " table)
     (modify-syntax-entry ?\] ")[  " table)
 
-    ;;; Escape syntax
+    ;;;
+    ;;; Escape syntax.
+    ;;;
 
     (modify-syntax-entry ?\\ "\\   " table)
     
