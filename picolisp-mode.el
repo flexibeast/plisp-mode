@@ -399,7 +399,8 @@ bound to each cadr from LIST, in turn.
                 (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
                 (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
                 (shr-insert-document snd)
-                (goto-char (point-min))))))
+                (goto-char (point-min))
+                (help-mode)))))
     (kill-buffer bfr)))
 
 
