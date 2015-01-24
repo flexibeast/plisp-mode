@@ -1,6 +1,6 @@
-;;; picolisp-mode.el --- major mode for PicoLisp programming.
+;;; picolisp-mode.el --- Major mode for PicoLisp programming.
 
-;; Copyright (C) 2014  Alexis <flexibeast@gmail.com>
+;; Copyright (C) 2014-2015  Alexis <flexibeast@gmail.com>
 
 ;; Author: Alexis <flexibeast@gmail.com>
 ;; Maintainer: Alexis <flexibeast@gmail.com>
