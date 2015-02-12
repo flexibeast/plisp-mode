@@ -458,7 +458,7 @@ specified by `picolisp-documentation-method'."
              (add-to-list 'process-environment
                           (concat "BROWSER=" picolisp-documentation-method))
            process-environment)))
-    (make-comint "picolisp-repl" "pil" nil (if picolisp-repl-debug-p "+" nil))
+    (make-comint "picolisp-repl" picolisp-pil-executable nil (if picolisp-repl-debug-p "+" nil))
     (switch-to-buffer "*picolisp-repl*")
     (picolisp-repl-mode)))
 
