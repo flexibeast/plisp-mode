@@ -43,6 +43,7 @@
 ;; - [Features](#features)
 ;; - [Installation](#installation)
 ;; - [Usage](#usage)
+;; - [TODO](#todo)
 ;; - [Issues](#issues)
 ;; - [License](#license)
 
@@ -64,7 +65,7 @@
 
 ;; Start a `pil' REPL session with `M-x picolisp-repl'.
 
-;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `'picolisp-display-documentation`; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
+;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
 
 ;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
 
@@ -85,6 +86,7 @@
 ;; * Add PicoLisp menu to menubar.
 
 ;; <a name="issues"></a>
+
 ;; ## Issues / bugs
 
 ;; If you discover an issue or bug in `picolisp-mode' not already noted:

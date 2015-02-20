@@ -18,6 +18,7 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
+- [TODO](#todo)
 - [Issues](#issues)
 - [License](#license)
 
@@ -60,6 +61,7 @@ PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for
 * Add PicoLisp menu to menubar.
 
 <a name="issues"></a>
+
 ## Issues / bugs
 
 If you discover an issue or bug in `picolisp-mode` not already noted:
