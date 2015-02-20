@@ -1,9 +1,17 @@
-# picolisp-mode - major mode for PicoLisp programming
+# picolisp-mode - Major mode for PicoLisp programming
 
 *Author:* Alexis <flexibeast@gmail.com><br>
 *URL:* [https://github.com/flexibeast/picolisp-mode](https://github.com/flexibeast/picolisp-mode)<br>
 
 `picolisp-mode` provides a major mode for PicoLisp programming.
+
+This package is not based on, nor connected with, the PicoLisp support for Emacs provided in [the PicoLisp distribution](http://software-lab.de/down.html), or the more recently [updated version of that support](https://github.com/tj64/picolisp-mode). At this stage, the main advantages this package provides are:
+
+* an actively maintained and supported system;
+
+* access to the PicoLisp reference documentation; and
+
+* a cleaner codebase.
 
 ## Table of Contents
 
@@ -31,7 +39,7 @@ Enable syntax highlighting for a PicoLisp source buffer with <kbd>M-x picolisp-m
 
 Start a `pil` REPL session with <kbd>M-x picolisp-repl</kbd>.
 
-Access documentation for the function at point with <kbd>C-c C-d</kbd> (`picolisp-describe-symbol`). By default, documentation will be displayed via the `lynx` HTML browser. However, one can set the value of `picolisp-documentation-method` to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `'picolisp-display-documentation`; this function uses the `shr` library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path`, and defaults to `/usr/share/doc/picolisp/doc/`.
+Access documentation for the function at point with <kbd>C-c C-d</kbd> (`picolisp-describe-symbol`). By default, documentation will be displayed via the `lynx` HTML browser. However, one can set the value of `picolisp-documentation-method` to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation`; this function uses the `shr` library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path`, and defaults to `/usr/share/doc/picolisp/doc/`.
 
 The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.
 
@@ -40,8 +48,18 @@ The various customisation options, including the faces used for syntax highlight
 ### A note on syntax highlighting
 
 PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for [good reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However, some - such as the author of this package! - feel that, even taking such issues into consideration, the benefits can outweigh the costs. (For example, when learning PicoLisp, it can be useful to get immediate visual feedback about unintentionally redefining a PicoLisp 'builtin'.) To accommodate both views, syntax highlighting can be enabled or disabled via the `picolisp-syntax-highlighting-p` variable; by default, it is set to `t` (enabled).
-<a name="issues"></a>
 
+## TODO
+
+* Add ElDoc support.
+
+* Add indentation support.
+
+* Add commenting support.
+
+* Add PicoLisp menu to menubar.
+
+<a name="issues"></a>
 ## Issues / bugs
 
 If you discover an issue or bug in `picolisp-mode` not already noted:

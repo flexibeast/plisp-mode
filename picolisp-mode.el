@@ -30,6 +30,14 @@
 
 ;; `picolisp-mode' provides a major mode for PicoLisp programming.
 
+;; This package is not based on, nor connected with, the PicoLisp support for Emacs provided in [the PicoLisp distribution](http://software-lab.de/down.html), or the more recently [updated version of that support](https://github.com/tj64/picolisp-mode). At this stage, the main advantages this package provides are:
+
+;; * an actively maintained and supported system;
+
+;; * access to the PicoLisp reference documentation; and
+
+;; * a cleaner codebase.
+
 ;; ## Table of Contents
 
 ;; - [Features](#features)
@@ -65,8 +73,18 @@
 ;; ### A note on syntax highlighting
 
 ;; PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for [good reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However, some - such as the author of this package! - feel that, even taking such issues into consideration, the benefits can outweigh the costs. (For example, when learning PicoLisp, it can be useful to get immediate visual feedback about unintentionally redefining a PicoLisp 'builtin'.) To accommodate both views, syntax highlighting can be enabled or disabled via the `picolisp-syntax-highlighting-p' variable; by default, it is set to `t' (enabled).
-;; <a name="issues"></a>
 
+;; ## TODO
+
+;; * Add ElDoc support.
+
+;; * Add indentation support.
+
+;; * Add commenting support.
+
+;; * Add PicoLisp menu to menubar.
+
+;; <a name="issues"></a>
 ;; ## Issues / bugs
 
 ;; If you discover an issue or bug in `picolisp-mode' not already noted:
