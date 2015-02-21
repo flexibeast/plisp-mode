@@ -67,6 +67,8 @@
 
 ;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
 
+;; ElDoc support is available; note, however, that documentation is not yet accessible for some symbols - in particular, the `c[ad]*ar' functions - due to edge-cases in the reference documentation structure.
+
 ;; Comment a region in a `picolisp-mode' buffer with `C-c C-;' (`picolisp-comment-region'); uncomment a region in a `picolisp-mode' buffer with `C-c C-:' (`picolisp-uncomment-region'). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
 ;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
@@ -79,11 +81,11 @@
 
 ;; ## TODO
 
-;; * Add ElDoc support.
+;; * Add PicoLisp menu to menubar.
 
 ;; * Add indentation support.
 
-;; * Add PicoLisp menu to menubar.
+;; * Improve ElDoc support; handle edge-cases in reference documentation structure.
 
 ;; <a name="issues"></a>
 
@@ -379,49 +381,64 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 ;; Internal functions.
 ;;
 
-(defmacro picolisp-dolist-pairs (spec &rest body)
-  "Loop over a list.
-Evaluate BODY with VAR1 bound to each car from LIST, and VAR2
-bound to each cadr from LIST, in turn.
-
-\(fn (VAR1 VAR2 LIST) BODY...)"
-  (declare (indent 1) (debug ((symbolp form &optional form) body)))
-  (let ((tmp '--dolist-pairs-tail--))
-    `(let (,(nth 0 spec)
-           ,(nth 1 spec)
-           (,tmp ,(nth 2 spec)))
-       (while ,tmp
-         (setq ,(nth 0 spec) (car ,tmp))
-         (setq ,(nth 1 spec) (cadr ,tmp))
-         ,@body
-         (setq ,tmp (cddr ,tmp))))))
-
-(defun picolisp-display-documentation (sym)
-  "Use `shr' to display documentation for symbol at point."
-  (unless (or (> emacs-major-version 24)
-              (and (= emacs-major-version 24)
-                   (> emacs-minor-version 3)))
-    (error "Emacs 24.4 or greater required"))
+(defun picolisp--extract-reference-documentation (sym)
+  "Helper function to extract the 'Function Reference' definition
+list from the PicoLisp documentation, where SYM is the symbol being
+looked up."
   (let* ((char (progn
-                 (string-match "^[[:punct:]]*\\([[:alpha:]]\\)" sym)
+                 (string-match "^[[:punct:]]*\\([[:punct:]]\\|[[:alpha:]]\\)" sym)
                  (upcase (match-string 1 sym))))
-         (doc (concat picolisp-documentation-directory "ref" char ".html"))
+         (doc (if (string-match "[[:alpha:]]" char)
+                  (concat picolisp-documentation-directory "ref" char ".html")
+                (concat picolisp-documentation-directory "ref_.html")))
          (bfr (generate-new-buffer " *PicoLisp documentation source*"))
          (dom (progn
                 (switch-to-buffer bfr)
                 (insert-file-contents doc)
                 (libxml-parse-html-region (point-min) (point-max))))
          (dl (nth 5 (nth 3 dom))))
-    (picolisp-dolist-pairs (fst snd dl)
-      (if (eq 'dt (car-safe fst))
-          (if (string= sym (cdaadr (nth 2 fst)))
-              (progn
-                (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
-                (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
-                (shr-insert-document snd)
-                (goto-char (point-min))
-                (help-mode)))))
-    (kill-buffer bfr)))
+    (kill-buffer bfr)
+    dl))
+
+(defun picolisp--shr-documentation (sym)
+  "Use `shr' to display documentation for symbol SYM at point."
+  (unless (or (> emacs-major-version 24)
+              (and (= emacs-major-version 24)
+                   (> emacs-minor-version 3)))
+    (error "Emacs 24.4 or greater required"))
+  (let ((dl (picolisp--extract-reference-documentation sym)))
+    (dotimes (i (/ (length dl) 2))
+      (let ((fst (nth (* i 2) dl))
+            (snd (nth (1+ (* i 2)) dl)))
+        (if (eq 'dt (car-safe fst))
+            (if (string= sym (cdaadr (nth 2 fst)))
+                (progn
+                  (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
+                  (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
+                  (shr-insert-document snd)
+                  (goto-char (point-min))
+                  (help-mode))))))))
+
+(defun picolisp--eldoc-function ()
+  "Function for use by `eldoc-documentation-function'."
+  (let* ((sym (symbol-name (symbol-at-point)))
+         (dl (picolisp--extract-reference-documentation sym))
+         (result nil))
+    (unless (string= "nil" sym)
+      (dotimes (i (/ (length dl) 2))
+        (let ((fst (nth (* i 2) dl))
+              (snd (nth (1+ (* i 2)) dl)))
+          (if (eq 'dt (car-safe fst))
+              (cond
+               ((eq 'cons (type-of (nth 2 fst)))
+                (if (string= sym (cdaadr (nth 2 fst)))
+                    (setq result (concat (propertize (concat sym ", ") 'face 'picolisp-builtin-face)
+                                         (nth 2 (caddr (nth 2 fst)))))))
+               ;; Ignore edge-cases in the documentation structure, such
+               ;; as the documentation for `c[ad]*ar'.
+               ((eq 'string (type-of (nth 2 fst)))
+                (setq result nil))))))             
+      result)))
 
 
 ;;
@@ -460,11 +477,12 @@ specified by `picolisp-documentation-method'."
     (if (member sym picolisp-builtins)
         (cond
          ((eq 'symbol (type-of picolisp-documentation-method))
-          (picolisp-display-documentation sym))
+          (picolisp--shr-documentation sym))
          ((eq 'string (type-of picolisp-documentation-method))
           (start-process-shell-command "picolisp-doc" nil
                                        (concat "pil -\"doc (car (nth (argv) 3)\" -bye - '" sym "' +")))
-         nil)
+         (t
+          (error "Unexpected value type in picolisp-documentation-method")))
       (message "No PicoLisp builtin at point."))))
 
 ;;;###autoload
@@ -481,7 +499,9 @@ specified by `picolisp-documentation-method'."
   (make-local-variable 'comment-start)
   (setq comment-start "#")
   (make-local-variable 'comment-end)
-  (setq comment-end "\n"))
+  (setq comment-end "\n")
+  (make-local-variable 'eldoc-documentation-function)
+  (setq eldoc-documentation-function #'picolisp--eldoc-function))
 
 ;;;###autoload
 (define-derived-mode picolisp-repl-mode comint-mode "PicoLisp REPL"

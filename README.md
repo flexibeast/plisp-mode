@@ -42,6 +42,8 @@ Start a `pil` REPL session with <kbd>M-x picolisp-repl</kbd>.
 
 Access documentation for the function at point with <kbd>C-c C-d</kbd> (`picolisp-describe-symbol`). By default, documentation will be displayed via the `lynx` HTML browser. However, one can set the value of `picolisp-documentation-method` to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation`; this function uses the `shr` library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path`, and defaults to `/usr/share/doc/picolisp/doc/`.
 
+ElDoc support is available; note, however, that documentation is not yet accessible for some symbols - in particular, the `c[ad]*ar` functions - due to edge-cases in the reference documentation structure.
+
 Comment a region in a `picolisp-mode` buffer with <kbd>C-c C-;</kbd> (`picolisp-comment-region`); uncomment a region in a `picolisp-mode` buffer with <kbd>C-c C-:</kbd> (`picolisp-uncomment-region`). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
 The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.
@@ -54,11 +56,11 @@ PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for
 
 ## TODO
 
-* Add ElDoc support.
+* Add PicoLisp menu to menubar.
 
 * Add indentation support.
 
-* Add PicoLisp menu to menubar.
+* Improve ElDoc support; handle edge-cases in reference documentation structure.
 
 <a name="issues"></a>
 
