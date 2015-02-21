@@ -67,6 +67,8 @@
 
 ;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
 
+;; Comment a region in a `picolisp-mode' buffer with `C-c C-;' (`picolisp-comment-region'); uncomment a region in a `picolisp-mode' buffer with `C-c C-:' (`picolisp-uncomment-region'). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
+
 ;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
 
 ;; <a name="note"></a>
@@ -428,6 +430,24 @@ bound to each cadr from LIST, in turn.
 ;; User-facing functions.
 ;;
 
+(defun picolisp-comment-region (&optional n)
+  "Comment lines in region using N '#' characters. N can be
+specified by providing a numeric prefix argument; otherwise,
+N defaults to 1."
+  (interactive "p")
+  (if n
+      (comment-region (region-beginning) (region-end) n)
+    (comment-region (region-beginning) (region-end) 1)))
+
+(defun picolisp-uncomment-region (&optional n)
+  "Uncomment lines in region by removing N '#' characters. N can
+be specified by providing a numeric prefix argument; otherwise,
+N defaults to 1."
+  (interactive "p")
+  (if n
+      (uncomment-region (region-beginning) (region-end) n)
+    (comment-region (region-beginning) (region-end) 1)))
+
 (defun picolisp-describe-symbol ()
   "Display documentation for symbol at point, via method
 specified by `picolisp-documentation-method'."
@@ -457,7 +477,13 @@ specified by `picolisp-documentation-method'."
   (set-syntax-table picolisp-mode-syntax-table)
   (if picolisp-syntax-highlighting-p
       (setq font-lock-defaults '((picolisp-font-lock-keywords))))
-  (define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol))
+  (define-key picolisp-mode-map (kbd "C-c C-;") 'picolisp-comment-region)
+  (define-key picolisp-mode-map (kbd "C-c C-:") 'picolisp-uncomment-region)
+  (define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
+  (make-local-variable 'comment-start)
+  (setq comment-start "#")
+  (make-local-variable 'comment-end)
+  (setq comment-end "\n"))
 
 ;;;###autoload
 (define-derived-mode picolisp-repl-mode comint-mode "PicoLisp REPL"

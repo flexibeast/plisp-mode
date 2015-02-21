@@ -32,7 +32,7 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 
 ## Installation
 
-Install [picolisp-mode from MELPA](http://melpa.org/#/picolisp-mode), or put the `picolisp-mode` folder in your load-path and do a `(require 'picolisp-mode)'.
+Install [picolisp-mode from MELPA](http://melpa.org/#/picolisp-mode), or put the `picolisp-mode` folder in your load-path and do a `(require 'picolisp-mode)`.
 
 ## Usage
 
@@ -41,6 +41,8 @@ Enable syntax highlighting for a PicoLisp source buffer with <kbd>M-x picolisp-m
 Start a `pil` REPL session with <kbd>M-x picolisp-repl</kbd>.
 
 Access documentation for the function at point with <kbd>C-c C-d</kbd> (`picolisp-describe-symbol`). By default, documentation will be displayed via the `lynx` HTML browser. However, one can set the value of `picolisp-documentation-method` to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation`; this function uses the `shr` library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path`, and defaults to `/usr/share/doc/picolisp/doc/`.
+
+Comment a region in a `picolisp-mode` buffer with <kbd>C-c C-;</kbd> (`picolisp-comment-region`); uncomment a region in a `picolisp-mode` buffer with <kbd>C-c C-:</kbd> (`picolisp-uncomment-region`). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
 The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.
 
