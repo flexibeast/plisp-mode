@@ -535,7 +535,9 @@ specified by `picolisp-documentation-method'."
   "Major mode for PicoLisp programming. Derived from lisp-mode.
 
 \\{picolisp-mode-map}"
-  (set-syntax-table picolisp-mode-syntax-table)
+  :group 'picolisp
+  :syntax-table picolisp-mode-syntax-table
+  
   (if picolisp-syntax-highlighting-p
       (setq font-lock-defaults '((picolisp-font-lock-keywords))))
   (make-local-variable 'comment-start)
@@ -554,7 +556,9 @@ specified by `picolisp-documentation-method'."
   "Major mode for `pil' REPL sessions. Derived from comint-mode.
 
 \\{picolisp-repl-mode-map}"
-  (set-syntax-table picolisp-mode-syntax-table)
+  :group 'picolisp
+  :syntax-table picolisp-mode-syntax-table
+  
   (if picolisp-syntax-highlighting-p
       (setq font-lock-defaults '((picolisp-font-lock-keywords))))
   (define-key picolisp-repl-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol))
