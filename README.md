@@ -64,8 +64,6 @@ The design of SLIME is such that it can override `picolisp-mode` functionality (
 
 ## TODO
 
-* Add PicoLisp menu to menubar.
-
 * Add indentation support.
 
 * Handle edge-cases in reference documentation structure:

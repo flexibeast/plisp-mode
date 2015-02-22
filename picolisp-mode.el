@@ -89,8 +89,6 @@
 
 ;; ## TODO
 
-;; * Add PicoLisp menu to menubar.
-
 ;; * Add indentation support.
 
 ;; * Handle edge-cases in reference documentation structure:
@@ -407,6 +405,15 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 ;; Internal functions.
 ;;
 
+(defun picolisp--create-picolisp-mode-menu ()
+  "Internal function to create or recreate the picolisp-mode menu."
+  (easy-menu-define picolisp-menu picolisp-mode-map "Menu bar entry for `picolisp-mode'"
+    `("PicoLisp"
+      ["Comment region" (picolisp-comment-region) :keys "C-c C-;"]
+      ["Uncomment region" (picolisp-uncomment-region) :keys "C-c C-:"]
+      ["PicoLisp REPL" (picolisp-repl) :keys "C-c C-r"]
+      ["Customize" (customize-group 'picolisp) t])))
+
 (defun picolisp--extract-reference-documentation (sym)
   "Helper function to extract the 'Function Reference' definition
 list from the PicoLisp documentation, where SYM is the symbol being
@@ -548,6 +555,7 @@ specified by `picolisp-documentation-method'."
   (setq comment-start "#")
   (make-local-variable 'eldoc-documentation-function)
   (setq eldoc-documentation-function #'picolisp--eldoc-function)
+  (picolisp--create-picolisp-mode-menu)
   (if picolisp-disable-slime-p
       (progn
         (make-local-variable 'lisp-mode-hook)
