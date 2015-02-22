@@ -63,7 +63,7 @@
 
 ;; Enable syntax highlighting for a PicoLisp source buffer with `M-x picolisp-mode'. 
 
-;; Start a `pil' REPL session with `M-x picolisp-repl'.
+;; Start a `pil' REPL session with `M-x picolisp-repl' or, from a `picolisp-mode' buffer, with `C-c C-r' (`picolisp-repl').
 
 ;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-path', and defaults to `/usr/share/doc/picolisp/doc/'.
 
@@ -211,6 +211,15 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 ;;
 ;; Internal variables.
 ;;
+
+(defvar picolisp-mode-map (make-sparse-keymap))
+(define-key picolisp-mode-map (kbd "C-c C-;") 'picolisp-comment-region)
+(define-key picolisp-mode-map (kbd "C-c C-:") 'picolisp-uncomment-region)
+(define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
+(define-key picolisp-mode-map (kbd "C-c C-r") 'picolisp-repl)
+
+(defvar picolisp-repl-mode-map (make-sparse-keymap))
+(define-key picolisp-repl-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
 
 ;; http://software-lab.de/doc/ref.html#fun
 
@@ -529,9 +538,6 @@ specified by `picolisp-documentation-method'."
   (set-syntax-table picolisp-mode-syntax-table)
   (if picolisp-syntax-highlighting-p
       (setq font-lock-defaults '((picolisp-font-lock-keywords))))
-  (define-key picolisp-mode-map (kbd "C-c C-;") 'picolisp-comment-region)
-  (define-key picolisp-mode-map (kbd "C-c C-:") 'picolisp-uncomment-region)
-  (define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
   (make-local-variable 'comment-start)
   (setq comment-start "#")
   (make-local-variable 'comment-end)
