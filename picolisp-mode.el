@@ -49,7 +49,7 @@
 
 ;; ## Features
 
-;; * Syntax highlighting of PicoLisp code. (But please read the below [note on syntax highlighting](#note).)
+;; * Syntax highlighting of PicoLisp code. (But please read the below [note on syntax highlighting](#highlighting).)
 
 ;; * Comint-based `pil' REPL buffers.
 
@@ -71,13 +71,21 @@
 
 ;; Comment a region in a `picolisp-mode' buffer with `C-c C-;' (`picolisp-comment-region'); uncomment a region in a `picolisp-mode' buffer with `C-c C-:' (`picolisp-uncomment-region'). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
+;; SLIME users should read the below [note on SLIME](#slime).
+
 ;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
 
-;; <a name="note"></a>
+;; <a name="highlighting"></a>
 
 ;; ### A note on syntax highlighting
 
 ;; PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for [good reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However, some - such as the author of this package! - feel that, even taking such issues into consideration, the benefits can outweigh the costs. (For example, when learning PicoLisp, it can be useful to get immediate visual feedback about unintentionally redefining a PicoLisp 'builtin'.) To accommodate both views, syntax highlighting can be enabled or disabled via the `picolisp-syntax-highlighting-p' variable; by default, it is set to `t' (enabled).
+
+;; <a name="slime"></a>
+
+;; ### A note on [SLIME](https://github.com/slime/slime)
+
+;; The design of SLIME is such that it can override `picolisp-mode' functionality (the documentation for `picolisp--disable-slime-modes' provides details). The user-customisable variable `picolisp-disable-slime-p' specifies whether to override these overrides, and defaults to `t'.
 
 ;; ## TODO
 
@@ -147,6 +155,11 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 
 (defcustom picolisp-syntax-highlighting-p t
   "Whether to enable syntax highlighting."
+  :type 'boolean
+  :group 'picolisp)
+
+(defcustom picolisp-disable-slime-p t
+  "Whether to disable SLIME modes in `picolisp-mode' buffers."
   :type 'boolean
   :group 'picolisp)
 
@@ -440,6 +453,29 @@ looked up."
                 (setq result nil))))))             
       result)))
 
+(defun picolisp--disable-slime-modes ()
+  "Function to add to `lisp-mode-hook' if `picolisp-disable-slime-p'
+is set to `t'.
+
+SLIME adds the function `slime-lisp-mode-hook' to the
+`lisp-mode-hook' variable. Since `picolisp-mode' is defined as
+being derived from `lisp-mode', the effect of this is to enable
+various SLIME features in `picolisp-mode' buffers, overriding
+`picolisp-mode' functionality.
+
+This function thus overrides those overrides, and:
+
+* disables `slime-mode';
+
+* disables `slime-autodoc-mode'; and
+
+* ensures that the value of `eldoc-documentation-function' is
+  `picolisp--eldoc-function'."
+  (slime-mode 0)
+  (slime-autodoc-mode 0)
+  (make-local-variable 'eldoc-documentation-function)
+  (setq eldoc-documentation-function #'picolisp--eldoc-function))
+
 
 ;;
 ;; User-facing functions.
@@ -501,7 +537,11 @@ specified by `picolisp-documentation-method'."
   (make-local-variable 'comment-end)
   (setq comment-end "\n")
   (make-local-variable 'eldoc-documentation-function)
-  (setq eldoc-documentation-function #'picolisp--eldoc-function))
+  (setq eldoc-documentation-function #'picolisp--eldoc-function)
+  (if picolisp-disable-slime-p
+      (progn
+        (make-local-variable 'lisp-mode-hook)
+        (add-hook 'lisp-mode-hook 'picolisp--disable-slime-modes))))
 
 ;;;###autoload
 (define-derived-mode picolisp-repl-mode comint-mode "PicoLisp REPL"

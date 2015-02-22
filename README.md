@@ -24,7 +24,7 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 
 ## Features
 
-* Syntax highlighting of PicoLisp code. (But please read the below [note on syntax highlighting](#note).)
+* Syntax highlighting of PicoLisp code. (But please read the below [note on syntax highlighting](#highlighting).)
 
 * Comint-based `pil` REPL buffers.
 
@@ -46,13 +46,21 @@ ElDoc support is available; note, however, that documentation is not yet accessi
 
 Comment a region in a `picolisp-mode` buffer with <kbd>C-c C-;</kbd> (`picolisp-comment-region`); uncomment a region in a `picolisp-mode` buffer with <kbd>C-c C-:</kbd> (`picolisp-uncomment-region`). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
+SLIME users should read the below [note on SLIME](#slime).
+
 The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.
 
-<a name="note"></a>
+<a name="highlighting"></a>
 
 ### A note on syntax highlighting
 
 PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for [good reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However, some - such as the author of this package! - feel that, even taking such issues into consideration, the benefits can outweigh the costs. (For example, when learning PicoLisp, it can be useful to get immediate visual feedback about unintentionally redefining a PicoLisp 'builtin'.) To accommodate both views, syntax highlighting can be enabled or disabled via the `picolisp-syntax-highlighting-p` variable; by default, it is set to `t` (enabled).
+
+<a name="slime"></a>
+
+### A note on [SLIME](https://github.com/slime/slime)
+
+The design of SLIME is such that it can override `picolisp-mode` functionality (the documentation for `picolisp--disable-slime-modes` provides details). The user-customisable variable `picolisp-disable-slime-p` specifies whether to override these overrides, and defaults to `t`.
 
 ## TODO
 
