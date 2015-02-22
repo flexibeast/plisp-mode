@@ -560,8 +560,7 @@ specified by `picolisp-documentation-method'."
   :syntax-table picolisp-mode-syntax-table
   
   (if picolisp-syntax-highlighting-p
-      (setq font-lock-defaults '((picolisp-font-lock-keywords))))
-  (define-key picolisp-repl-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol))
+      (setq font-lock-defaults '((picolisp-font-lock-keywords)))))
 
 ;;;###autoload
 (defun picolisp-repl ()
