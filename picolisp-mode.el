@@ -542,8 +542,6 @@ specified by `picolisp-documentation-method'."
       (setq font-lock-defaults '((picolisp-font-lock-keywords))))
   (make-local-variable 'comment-start)
   (setq comment-start "#")
-  (make-local-variable 'comment-end)
-  (setq comment-end "\n")
   (make-local-variable 'eldoc-documentation-function)
   (setq eldoc-documentation-function #'picolisp--eldoc-function)
   (if picolisp-disable-slime-p
