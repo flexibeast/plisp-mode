@@ -93,7 +93,11 @@
 
 ;; * Add indentation support.
 
-;; * Improve ElDoc support; handle edge-cases in reference documentation structure.
+;; * Handle edge-cases in reference documentation structure:
+
+;;  * `picolisp-describe-symbol' fails on e.g. `class';
+
+;;  * `picolisp--eldoc-function' fails on e.g. `c[ad]*ar'.
 
 ;; <a name="issues"></a>
 
