@@ -136,7 +136,7 @@
   :type '(file :must-match t)
   :group 'picolisp)
 
-(defcustom picolisp-documentation-directory "/usr/share/doc/picolisp/doc/"
+(defcustom picolisp-documentation-directory "/usr/share/picolisp/doc/"
   "Absolute path of the PicoLisp HTML documentation directory."
   :type 'directory
   :group 'picolisp)
