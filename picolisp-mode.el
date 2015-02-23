@@ -71,7 +71,7 @@
 
 ;; Comment a region in a `picolisp-mode' buffer with `C-c C-;' (`picolisp-comment-region'); uncomment a region in a `picolisp-mode' buffer with `C-c C-:' (`picolisp-uncomment-region'). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
-;; Indent a region in a `picolisp-mode' buffer with `C-c M-q' (`picolisp-indent-region'). Indentation is done via the `pilIndent' script, the path to which is specified via the `picolisp-pilindent-executable' variable.
+;; Indent a region in a `picolisp-mode' buffer with `C-c M-q' (`picolisp-indent-region'). Indentation is done via the `pilIndent' script provided with the current PicoLisp distribution; the path to the script is specified via the `picolisp-pilindent-executable' variable.
 
 ;; SLIME users should read the below [note on SLIME](#slime).
 
@@ -91,7 +91,7 @@
 
 ;; ## TODO
 
-;; * Add indentation support.
+;; * Implement `pilIndent' in Emacs Lisp, make available as a fallback when `pilIndent' is not available.
 
 ;; * Handle edge-cases in reference documentation structure:
 
