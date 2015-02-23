@@ -46,6 +46,8 @@ ElDoc support is available; note, however, that documentation is not yet accessi
 
 Comment a region in a `picolisp-mode` buffer with <kbd>C-c C-;</kbd> (`picolisp-comment-region`); uncomment a region in a `picolisp-mode` buffer with <kbd>C-c C-:</kbd> (`picolisp-uncomment-region`). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
+Indent a region in a `picolisp-mode` buffer with <kbd>C-c M-q</kbd> (`picolisp-indent-region`). Indentation is done via the `pilIndent` script, the path to which is specified via the `picolisp-pilindent-executable` variable.
+
 SLIME users should read the below [note on SLIME](#slime).
 
 The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp` customize-group.

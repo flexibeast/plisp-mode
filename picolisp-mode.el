@@ -71,6 +71,8 @@
 
 ;; Comment a region in a `picolisp-mode' buffer with `C-c C-;' (`picolisp-comment-region'); uncomment a region in a `picolisp-mode' buffer with `C-c C-:' (`picolisp-uncomment-region'). By default one '#' character is added/removed; to specify more, supply a numeric prefix argument to either command.
 
+;; Indent a region in a `picolisp-mode' buffer with `C-c M-q' (`picolisp-indent-region'). Indentation is done via the `pilIndent' script, the path to which is specified via the `picolisp-pilindent-executable' variable.
+
 ;; SLIME users should read the below [note on SLIME](#slime).
 
 ;; The various customisation options, including the faces used for syntax highlighting, are available via the `picolisp' customize-group.
@@ -135,6 +137,11 @@
 
 (defcustom picolisp-pil-executable "/usr/bin/pil"
   "Absolute path of the `pil' executable."
+  :type '(file :must-match t)
+  :group 'picolisp)
+
+(defcustom picolisp-pilindent-executable "/usr/bin/pilIndent"
+  "Absolute path of the `pilIndent' executable."
   :type '(file :must-match t)
   :group 'picolisp)
 
@@ -219,6 +226,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 (define-key picolisp-mode-map (kbd "C-c C-:") 'picolisp-uncomment-region)
 (define-key picolisp-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
 (define-key picolisp-mode-map (kbd "C-c C-r") 'picolisp-repl)
+(define-key picolisp-mode-map (kbd "C-c M-q") 'picolisp-indent-region)
 
 (defvar picolisp-repl-mode-map (make-sparse-keymap))
 (define-key picolisp-repl-mode-map (kbd "C-c C-d") 'picolisp-describe-symbol)
@@ -411,6 +419,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     `("PicoLisp"
       ["Comment region" (picolisp-comment-region) :keys "C-c C-;"]
       ["Uncomment region" (picolisp-uncomment-region) :keys "C-c C-:"]
+      ["Indent region" (picolisp-indent-region) :keys "C-c M-q"]
       ["PicoLisp REPL" (picolisp-repl) :keys "C-c C-r"]
       ["Customize" (customize-group 'picolisp) t])))
 
@@ -518,6 +527,18 @@ N defaults to 1."
   (if n
       (uncomment-region (region-beginning) (region-end) n)
     (comment-region (region-beginning) (region-end) 1)))
+
+(defun picolisp-indent-region ()
+  "Indent the active region using the `pilIndent' script."
+  (interactive)
+  (unless (region-active-p)
+    (user-error "Region is not active"))
+  (let* ((beginning (region-beginning))
+         (end (region-end)))
+    (shell-command-on-region
+     beginning end
+     picolisp-pilindent-executable
+     nil t)))
 
 (defun picolisp-describe-symbol ()
   "Display documentation for symbol at point, via method
