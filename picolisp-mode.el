@@ -95,7 +95,9 @@
 
 ;; * Fix syntax highlighting issues:
 
-;;  * '#' or builtins within double-quotes should not be syntax-highlighted.
+;;  * Builtins within double-quotes should not be syntax-highlighted.
+
+;;  * Builtins in the cadr position should not be syntax-highlighted.
 
 ;; * Handle edge-cases in reference documentation structure:
 
@@ -277,10 +279,10 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ("(\\([[:alpha:]]\\S-+>\\s-\\)"
      (1 'picolisp-method-face))
     ("\\(\\+[A-Z][[:alpha:]]*\\)"
-     (1 'picolisp-normal-class-face))))
      (1 'picolisp-normal-class-face))
     ("\\(\".*#.*\".*\\)" ; If '#' is within double quotes,
      (1 'default t)))    ; don't fontify it as a comment.
+  "Regexes for syntax-highlighting `picolisp-mode' buffers.")
 
 ;;
 ;; http://software-lab.de/doc/ref.html#symbol:

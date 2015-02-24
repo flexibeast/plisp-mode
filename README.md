@@ -70,7 +70,9 @@ The design of SLIME is such that it can override `picolisp-mode` functionality (
 
 * Fix syntax highlighting issues:
 
- * '#' or builtins within double-quotes should not be syntax-highlighted.
+ * Builtins within double-quotes should not be syntax-highlighted.
+
+ * Builtins in the cadr position should not be syntax-highlighted.
 
 * Handle edge-cases in reference documentation structure:
 
