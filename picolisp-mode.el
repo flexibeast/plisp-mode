@@ -95,7 +95,7 @@
 
 ;; * Handle edge-cases in reference documentation structure:
 
-;;  * `picolisp-describe-symbol' fails on e.g. `class';
+;;  * `picolisp-describe-symbol' failures;
 
 ;;  * `picolisp--eldoc-function' fails on e.g. `c[ad]*ar'.
 
@@ -453,13 +453,19 @@ looked up."
       (let ((fst (nth (* i 2) dl))
             (snd (nth (1+ (* i 2)) dl)))
         (if (eq 'dt (car-safe fst))
-            (if (string= sym (cdaadr (nth 2 fst)))
-                (progn
-                  (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
-                  (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
-                  (shr-insert-document snd)
-                  (goto-char (point-min))
-                  (help-mode))))))))
+            (cond
+             ((eq 'cons (type-of (nth 2 fst)))
+              (if (string= sym (cdaadr (nth 2 fst)))
+                  (progn
+                    (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
+                    (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
+                    (shr-insert-document snd)
+                    (goto-char (point-min))
+                    (help-mode))))
+             ;; Ignore edge-cases in the documentation structure, such
+             ;; as the documentation for `class'.
+             ((eq 'string (type-of (nth 2 fst)))
+              nil)))))))
 
 (defun picolisp--eldoc-function ()
   "Function for use by `eldoc-documentation-function'."

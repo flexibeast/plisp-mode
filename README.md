@@ -70,7 +70,7 @@ The design of SLIME is such that it can override `picolisp-mode` functionality (
 
 * Handle edge-cases in reference documentation structure:
 
- * `picolisp-describe-symbol` fails on e.g. `class`;
+ * `picolisp-describe-symbol` failures;
 
  * `picolisp--eldoc-function` fails on e.g. `c[ad]*ar`.
 
