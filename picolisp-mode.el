@@ -278,6 +278,9 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
      (1 'picolisp-method-face))
     ("\\(\\+[A-Z][[:alpha:]]*\\)"
      (1 'picolisp-normal-class-face))))
+     (1 'picolisp-normal-class-face))
+    ("\\(\".*#.*\".*\\)" ; If '#' is within double quotes,
+     (1 'default t)))    ; don't fontify it as a comment.
 
 ;;
 ;; http://software-lab.de/doc/ref.html#symbol:
