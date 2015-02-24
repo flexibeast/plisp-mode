@@ -301,6 +301,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     (modify-syntax-entry ?: "_   " table)
     (modify-syntax-entry ?> "_   " table)
     (modify-syntax-entry ?< "_   " table)
+    (modify-syntax-entry ?? "_   " table)
     (modify-syntax-entry ?@ "_   " table)
     (modify-syntax-entry ?A "_   " table)
     (modify-syntax-entry ?B "_   " table)
