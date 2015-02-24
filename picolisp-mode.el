@@ -97,8 +97,6 @@
 
 ;;  * Builtins within double-quotes should not be syntax-highlighted.
 
-;;  * Builtins in the cadr position should not be syntax-highlighted.
-
 ;; * Handle edge-cases in reference documentation structure:
 
 ;;  * `picolisp-describe-symbol' failures;
@@ -266,8 +264,6 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 (defvar picolisp-font-lock-keywords
   `(("\\_<\\(T\\|NIL\\)\\_>"
      (1 'picolisp-global-constant-face))
-    (,(concat "\\_<\\(" picolisp-builtins-regex "\\)\\_>")
-     (1 'picolisp-builtin-face))
     ("\\(#.*\\)"
      (1 'picolisp-comment-face))
     ("\\(\\+[a-z]\\S-*\\)"
@@ -278,10 +274,12 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
      (1 'picolisp-local-function-face))
     ("(\\([[:alpha:]]\\S-+>\\s-\\)"
      (1 'picolisp-method-face))
-    ("\\(\\+[A-Z][[:alpha:]]*\\)"
-     (1 'picolisp-normal-class-face))
     ("\\(\".*#.*\".*\\)" ; If '#' is within double quotes,
-     (1 'default t)))    ; don't fontify it as a comment.
+     (1 'default t))     ; don't fontify it as a comment.
+    (,(concat "(\\_<\\(" picolisp-builtins-regex "\\)\\_>")
+     (1 'picolisp-builtin-face t))
+    ("\\(\\+[A-Z][[:alpha:]]*\\)"
+     (1 'picolisp-normal-class-face t)))
   "Regexes for syntax-highlighting `picolisp-mode' buffers.")
 
 ;;
