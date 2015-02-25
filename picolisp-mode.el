@@ -34,7 +34,9 @@
 
 ;; * an actively maintained and supported system;
 
-;; * access to the PicoLisp reference documentation; and
+;; * access to the PicoLisp reference documentation, including via ElDoc;
+
+;; * ease of customisability; and
 
 ;; * a cleaner codebase.
 

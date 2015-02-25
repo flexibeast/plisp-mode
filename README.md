@@ -9,7 +9,9 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 
 * an actively maintained and supported system;
 
-* access to the PicoLisp reference documentation; and
+* access to the PicoLisp reference documentation, including via ElDoc;
+
+* ease of customisability; and
 
 * a cleaner codebase.
 
