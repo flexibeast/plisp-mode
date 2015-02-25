@@ -67,7 +67,7 @@
 
 ;; Start a `pil' REPL session with `M-x picolisp-repl' or, from a `picolisp-mode' buffer, with `C-c C-r' (`picolisp-repl').
 
-;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp-display-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-directory', and defaults to `/usr/share/picolisp/doc/'.
+;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp--shr-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-directory', and defaults to `/usr/share/picolisp/doc/'.
 
 ;; ElDoc support is available; note, however, that documentation is not yet accessible for some symbols - in particular, the `c[ad]*ar' functions - due to edge-cases in the reference documentation structure.
 
@@ -156,9 +156,9 @@
   :type 'directory
   :group 'picolisp)
 
-(defcustom picolisp-documentation-method 'picolisp-display-documentation
+(defcustom picolisp-documentation-method 'picolisp--shr-documentation
   "System to be used to display PicoLisp documentation."
-  :type '(radio (function :tag "Function - must already be defined" :value 'picolisp-display-documentation)
+  :type '(radio (function :tag "Function - must already be defined" :value 'picolisp--shr-documentation)
                 (file :tag "HTML browser - absolute path" :value "/usr/bin/lynx"))
   :group 'picolisp)
 
