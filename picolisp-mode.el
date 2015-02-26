@@ -222,6 +222,11 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
   "Face for PicoLisp normal classes."
   :group 'picolisp-faces)
 
+(defface picolisp-transient-symbol-face
+  '((((background light)) :foreground "blue"))
+  "Face for PicoLisp transient symbols."
+  :group 'picolisp-faces)
+
 
 ;;
 ;; Internal variables.
@@ -265,23 +270,22 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 
 (defvar picolisp-font-lock-keywords
   `(("\\_<\\(T\\|NIL\\)\\_>"
-     (1 'picolisp-global-constant-face))
-    ("\\(#.*\\)"
-     (1 'picolisp-comment-face))
-    ("\\(\\+[a-z]\\S-*\\)"
-     (1 'picolisp-abstract-class-face))
+     (1 'picolisp-global-constant-face t))
     ("\\(\\*[[:alpha:]]+\\)"
-     (1 'picolisp-global-variable-face))
-    ("\\(_\\S-+\\)"
-     (1 'picolisp-local-function-face))
-    ("(\\([[:alpha:]]\\S-+>\\s-\\)"
-     (1 'picolisp-method-face))
-    ("\\(\".*#.*\".*\\)" ; If '#' is within double quotes,
-     (1 'default t))     ; don't fontify it as a comment.
-    (,(concat "(\\_<\\(" picolisp-builtins-regex "\\)\\_>")
-     (1 'picolisp-builtin-face t))
+     (1 'picolisp-global-variable-face t))
+    ("\\(\\+[a-z]\\S-*\\)"
+     (1 'picolisp-abstract-class-face t))
     ("\\(\\+[A-Z][[:alpha:]]*\\)"
-     (1 'picolisp-normal-class-face t)))
+     (1 'picolisp-normal-class-face t))
+    (,(concat "\\((\\)\\_<\\(" picolisp-builtins-regex "\\)\\_>")
+     (1 'default t)
+     (2 'picolisp-builtin-face t))
+    ("(\\(_\\S-+\\)"
+     (1 'picolisp-local-function-face t))
+    ("(\\([[:alpha:]]\\S-+>\\s-\\)"
+     (1 'picolisp-method-face t))
+    ("\\(\".+?\"\\)"
+     (1 'picolisp-transient-symbol-face t)))
   "Regexes for syntax-highlighting `picolisp-mode' buffers.")
 
 ;;
