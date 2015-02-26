@@ -433,6 +433,50 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
       ["PicoLisp REPL" (picolisp-repl) :keys "C-c C-r"]
       ["Customize" (customize-group 'picolisp) t])))
 
+(defun picolisp--disable-slime-modes ()
+  "Function to add to `lisp-mode-hook' if `picolisp-disable-slime-p'
+is set to `t'.
+
+SLIME adds the function `slime-lisp-mode-hook' to the
+`lisp-mode-hook' variable. Since `picolisp-mode' is defined as
+being derived from `lisp-mode', the effect of this is to enable
+various SLIME features in `picolisp-mode' buffers, overriding
+`picolisp-mode' functionality.
+
+This function thus overrides those overrides, and:
+
+* disables `slime-mode';
+
+* disables `slime-autodoc-mode'; and
+
+* ensures that the value of `eldoc-documentation-function' is
+  `picolisp--eldoc-function'."
+  (slime-mode 0)
+  (slime-autodoc-mode 0)
+  (make-local-variable 'eldoc-documentation-function)
+  (setq eldoc-documentation-function #'picolisp--eldoc-function))
+
+(defun picolisp--eldoc-function ()
+  "Function for use by `eldoc-documentation-function'."
+  (let* ((sym (symbol-name (symbol-at-point)))
+         (dl (picolisp--extract-reference-documentation sym))
+         (result nil))
+    (unless (string= "nil" sym)
+      (dotimes (i (/ (length dl) 2))
+        (let ((fst (nth (* i 2) dl))
+              (snd (nth (1+ (* i 2)) dl)))
+          (if (eq 'dt (car-safe fst))
+              (cond
+               ((eq 'cons (type-of (nth 2 fst)))
+                (if (string= sym (cdaadr (nth 2 fst)))
+                    (setq result (concat (propertize (concat sym ", ") 'face 'picolisp-builtin-face)
+                                         (nth 2 (caddr (nth 2 fst)))))))
+               ;; Ignore edge-cases in the documentation structure, such
+               ;; as the documentation for `c[ad]*ar'.
+               ((eq 'string (type-of (nth 2 fst)))
+                (setq result nil))))))
+      result)))
+
 (defun picolisp--extract-reference-documentation (sym)
   "Helper function to extract the 'Function Reference' definition
 list from the PicoLisp documentation, where SYM is the symbol being
@@ -477,49 +521,6 @@ looked up."
              ((eq 'string (type-of (nth 2 fst)))
               nil)))))))
 
-(defun picolisp--eldoc-function ()
-  "Function for use by `eldoc-documentation-function'."
-  (let* ((sym (symbol-name (symbol-at-point)))
-         (dl (picolisp--extract-reference-documentation sym))
-         (result nil))
-    (unless (string= "nil" sym)
-      (dotimes (i (/ (length dl) 2))
-        (let ((fst (nth (* i 2) dl))
-              (snd (nth (1+ (* i 2)) dl)))
-          (if (eq 'dt (car-safe fst))
-              (cond
-               ((eq 'cons (type-of (nth 2 fst)))
-                (if (string= sym (cdaadr (nth 2 fst)))
-                    (setq result (concat (propertize (concat sym ", ") 'face 'picolisp-builtin-face)
-                                         (nth 2 (caddr (nth 2 fst)))))))
-               ;; Ignore edge-cases in the documentation structure, such
-               ;; as the documentation for `c[ad]*ar'.
-               ((eq 'string (type-of (nth 2 fst)))
-                (setq result nil))))))             
-      result)))
-
-(defun picolisp--disable-slime-modes ()
-  "Function to add to `lisp-mode-hook' if `picolisp-disable-slime-p'
-is set to `t'.
-
-SLIME adds the function `slime-lisp-mode-hook' to the
-`lisp-mode-hook' variable. Since `picolisp-mode' is defined as
-being derived from `lisp-mode', the effect of this is to enable
-various SLIME features in `picolisp-mode' buffers, overriding
-`picolisp-mode' functionality.
-
-This function thus overrides those overrides, and:
-
-* disables `slime-mode';
-
-* disables `slime-autodoc-mode'; and
-
-* ensures that the value of `eldoc-documentation-function' is
-  `picolisp--eldoc-function'."
-  (slime-mode 0)
-  (slime-autodoc-mode 0)
-  (make-local-variable 'eldoc-documentation-function)
-  (setq eldoc-documentation-function #'picolisp--eldoc-function))
 
 
 ;;
