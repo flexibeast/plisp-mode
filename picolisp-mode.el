@@ -367,7 +367,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     
     ;; { and } delimit external symbol names.
     (modify-syntax-entry ?\{ "_   " table)
-    (modify-syntax-entry ?\} "_  " table)
+    (modify-syntax-entry ?\} "_   " table)
 
     ;; . can be used in a symbol name, even though,
     ;; when surrounded by white space, it's
@@ -376,7 +376,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 
     ;; " primarily indicates a transient symbol, even
     ;; though it can also be used to indicate strings.
-    (modify-syntax-entry ?\" "_    " table)
+    (modify-syntax-entry ?\" "_   " table)
 
     ;;;
     ;;; Whitespace syntax.
