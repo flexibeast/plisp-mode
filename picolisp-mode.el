@@ -305,7 +305,9 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ("(\\([[:alpha:]]\\S-+>\\s-\\)"
      (1 'picolisp-method-face t))
     ("\\(\".+?\"\\)"
-     (1 'picolisp-transient-symbol-face t)))
+     (1 'picolisp-transient-symbol-face t))
+    ("^.*?\\(#+.*\\)$"
+     (1 'picolisp-comment-face)))
   "Regexes for syntax-highlighting `picolisp-mode' buffers.")
 
 ;;
@@ -520,6 +522,19 @@ looked up."
     (kill-buffer bfr)
     dl))
 
+(defun picolisp--font-lock-syntactic-face-function (state)
+  "No-op function to prevent font-lock from trying to fontify
+comments and strings.
+
+Since strings in PicoLisp are fundamentally (transient)
+symbols, they are marked as such in the PicoLisp syntax-table.
+However, this makes it complicated for Emacs to determine if
+a '#' character is a comment delimiter or merely a constituent
+of a string / transient symbol. So we override syntactic
+fontification with this no-op function, and fontify comments
+via `picolisp-font-lock-keywords'."
+  nil)
+
 (defun picolisp--shr-documentation (sym)
   "Use `shr' to display documentation for symbol SYM at point."
   (unless (or (> emacs-major-version 24)
@@ -544,7 +559,6 @@ looked up."
              ;; as the documentation for `class'.
              ((eq 'string (type-of (nth 2 fst)))
               nil)))))))
-
 
 
 ;;
@@ -610,13 +624,15 @@ specified by `picolisp-documentation-method'."
 \\{picolisp-mode-map}"
   :group 'picolisp
   :syntax-table picolisp-mode-syntax-table
-  
+
+  (setq-local comment-start "#")
+  (setq-local comment-start-skip "#+ *")
   (if picolisp-syntax-highlighting-p
-      (setq font-lock-defaults '((picolisp-font-lock-keywords))))
-  (make-local-variable 'comment-start)
-  (setq comment-start "#")
-  (make-local-variable 'eldoc-documentation-function)
-  (setq eldoc-documentation-function #'picolisp--eldoc-function)
+      (setq-local font-lock-defaults '(picolisp-font-lock-keywords
+                                       nil nil nil nil
+                                       (font-lock-syntactic-face-function
+                                        . picolisp--font-lock-syntactic-face-function))))
+  (setq-local eldoc-documentation-function #'picolisp--eldoc-function)
   (picolisp--create-picolisp-mode-menu)
   (if picolisp-disable-slime-p
       (progn
@@ -630,9 +646,15 @@ specified by `picolisp-documentation-method'."
 \\{picolisp-repl-mode-map}"
   :group 'picolisp
   :syntax-table picolisp-mode-syntax-table
-  
+
+  (setq-local comment-start "#")
+  (setq-local comment-start-skip "#+ *")
   (if picolisp-syntax-highlighting-p
-      (setq font-lock-defaults '((picolisp-font-lock-keywords)))))
+      (setq-local font-lock-defaults '(picolisp-font-lock-keywords
+                                       nil nil nil nil
+                                       (font-lock-syntactic-face-function
+                                        . picolisp--font-lock-syntactic-face-function))))
+  (setq-local eldoc-documentation-function #'picolisp--eldoc-function))
 
 ;;;###autoload
 (defun picolisp-repl ()
