@@ -84,7 +84,7 @@ PicoLisp's creator is opposed to syntax highlighting of symbols in PicoLisp, for
 
 ### A note on [SLIME](https://github.com/slime/slime)
 
-The design of SLIME is such that it can override `picolisp-mode` functionality (the documentation for `picolisp--disable-slime-modes` provides details). The user-customisable variable `picolisp-disable-slime-p` specifies whether to override these overrides, and defaults to `t`.
+The design of SLIME is such that it can override `picolisp-mode` functionality. (The documentation for `picolisp--disable-slime-modes` provides details.) The user-customisable variable `picolisp-disable-slime-p` specifies whether to override these overrides, and defaults to `t`.
 
 ## TODO
 
