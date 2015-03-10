@@ -494,7 +494,7 @@ This function thus overrides those overrides, and:
                ((eq 'cons (type-of (nth 2 fst)))
                 (if (string= sym (cdaadr (nth 2 fst)))
                     (setq result (concat (propertize (concat sym ", ") 'face 'picolisp-builtin-face)
-                                         (nth 2 (caddr (nth 2 fst)))))))
+                                         (nth 2 (car (cdr (cdr (nth 2 fst)))))))))
                ;; Ignore edge-cases in the documentation structure, such
                ;; as the documentation for `c[ad]*ar'.
                ((eq 'string (type-of (nth 2 fst)))
@@ -533,7 +533,7 @@ looked up."
         (if (eq 'dt (car-safe fst))
             (cond
              ((eq 'cons (type-of (nth 2 fst)))
-              (if (string= sym (cdaadr (nth 2 fst)))
+              (if (string= sym (cdr (car (car (cdr (nth 2 fst))))))
                   (progn
                     (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
                     (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
