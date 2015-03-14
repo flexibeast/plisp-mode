@@ -115,9 +115,7 @@
 
 ;; * Implement `pilIndent' in Emacs Lisp, make available as a fallback when `pilIndent' is not available.
 
-;; * Fix syntax highlighting issues:
-
-;;  * Builtins within double-quotes should not be syntax-highlighted.
+;; * Fix misalignment of single-'#' comments upon newline.
 
 ;; * Handle edge-cases in reference documentation structure:
 
