@@ -1,5 +1,7 @@
 # picolisp-mode - Major mode for PicoLisp programming
 
+[![Join the chat at https://gitter.im/flexibeast/picolisp-mode](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/flexibeast/picolisp-mode?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 *Author:* Alexis <flexibeast@gmail.com><br>
 *URL:* [https://github.com/flexibeast/picolisp-mode](https://github.com/flexibeast/picolisp-mode)<br>
 
