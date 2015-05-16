@@ -36,6 +36,8 @@
 
 ;; * access to the PicoLisp reference documentation, including via ElDoc;
 
+;; * basic Imenu support;
+
 ;; * ease of customisability; and
 
 ;; * a cleaner codebase.
@@ -401,7 +403,8 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;;;
     ;;; Whitespace syntax.
     ;;;
-    
+
+    (modify-syntax-entry ?\n "    " table)
     (modify-syntax-entry ?\s "    " table)
     (modify-syntax-entry ?\x8a0 "    " table)
     (modify-syntax-entry ?\t "    " table)
@@ -412,7 +415,6 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;;;
     
     (modify-syntax-entry ?# "<   " table)
-    (modify-syntax-entry ?\n ">   " table)
 
     ;;;
     ;;; Quote syntax.
@@ -533,6 +535,87 @@ fontification with this no-op function, and fontify comments
 via `picolisp-font-lock-keywords'."
   nil)
 
+(defun picolisp--imenu-create-index ()
+  "Internal function to create an Imenu index."
+  (let ((index '()))
+    (setq index (append index (picolisp--imenu-find-classes-and-members)))
+    (setq index (append index (picolisp--imenu-find-database-objects)))
+    (setq index (append index (picolisp--imenu-find-facts-and-rules)))
+    (setq index (append index (picolisp--imenu-find-functions)))
+    (setq index (append index (picolisp--imenu-find-global-variables)))
+    index))
+
+(defun picolisp--imenu-find-classes-and-members ()
+  "Internal function to find PicoLisp classes and their
+associated methods and/or relations."
+  (let ((classes '()))
+    (goto-char (point-min))
+    (while (re-search-forward "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
+      (let ((class (match-string 1))
+            (class-index (match-beginning 1))
+            (members '())
+            (methods '())
+            (relations '())
+            (next-class-index 0))
+        (setq members `(("Definition" . ,class-index)))
+        (save-excursion
+          (setq next-class-index
+                (if (re-search-forward "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
+                    (match-beginning 1)
+                  (point-max))))
+        (save-excursion
+          (while (re-search-forward "^[[:space:]]*(dm \\([[:alnum:]]+>\\)" next-class-index t)
+            (setq methods (append methods `((,(match-string 1) . ,(match-beginning 1)))))))
+        (setq methods `(("Methods" . ,methods)))
+        (save-excursion
+          (while (re-search-forward "^[[:space:]]*(rel \\([[:alnum:]]+\\)" next-class-index t)
+            (setq relations (append relations `((,(match-string 1) . ,(match-beginning 1)))))))
+        (setq relations `(("Relations" . ,relations)))
+        (setq members (append members methods relations))
+        (setq classes (append classes `((,class . ,members))))))
+    (setq classes `(("Classes" . ,classes)))
+    classes))
+
+(defun picolisp--imenu-find-database-objects ()
+  "Internal function to find PicoLisp database objects."
+  (let ((re (concat "^[[:space:]]*(obj[[:space:]]+((\\([^)]+\\))[[:space:]]+"
+                    "\\(?:[^[:space:]]+[[:space:]]+\\)?\\([^[:space:]]+\\))"))
+        (objs '()))
+    (goto-char (point-min))
+    (while (re-search-forward re nil t)
+      (let ((obj-class (match-string 1))
+            (obj-identifier (match-string 2))
+            (obj-position (match-beginning 2)))
+        (if (assoc obj-class objs)
+            (setcdr (assoc obj-class objs)
+                    (append (cdr (assoc obj-class objs)) `((,obj-identifier . ,obj-position))))
+          (setq objs
+                (append objs `((,obj-class . ((,obj-identifier . ,obj-position)))))))))
+    (setq objs `(("Database objects" . ,objs)))
+    objs))
+
+(defun picolisp--imenu-find-facts-and-rules ()
+  "Internal function to find PicoLisp facts and/or rules."
+  (picolisp--imenu-find-things "Facts and rules" "^[[:space:]]*(be \\([[:alnum:]]+\\))"))
+
+(defun picolisp--imenu-find-functions ()
+  "Internal function to find PicoLisp functions."
+  (picolisp--imenu-find-things "Functions" "^[[:space:]]*(de \\([^*][[:alnum:]*+_]+\\)[[:space:]]+("))
+
+(defun picolisp--imenu-find-global-variables ()
+  "Internal function to find PicoLisp global variables."
+  (picolisp--imenu-find-things "Global variables" "^[[:space:]]*(de \\([*][[:alnum:]*+]+\\)[[:space:]]+"))
+
+(defun picolisp--imenu-find-things (name re)
+  "Internal function to find PicoLisp components of type NAME
+that can be identified by a simple regular expression RE."
+  (let ((things '()))
+    (goto-char (point-min))
+    (while (re-search-forward re nil t)
+      (setq things (append things `((,(match-string 1) . ,(match-beginning 1))))))
+    (setq things `((,name . ,things)))
+    things))
+
 (defun picolisp--shr-documentation (sym)
   "Use `shr' to display documentation for symbol SYM at point."
   (unless (or (> emacs-major-version 24)
@@ -632,6 +715,9 @@ specified by `picolisp-documentation-method'."
                                         . picolisp--font-lock-syntactic-face-function))))
   (setq-local eldoc-documentation-function #'picolisp--eldoc-function)
   (picolisp--create-picolisp-mode-menu)
+  (setq-local imenu-create-index-function 'picolisp--imenu-create-index)
+  (setq-local imenu-sort-function 'imenu--sort-by-name)
+  (imenu-add-menubar-index)
   (if picolisp-disable-slime-p
       (progn
         (make-local-variable 'lisp-mode-hook)

@@ -11,6 +11,8 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 
 * access to the PicoLisp reference documentation, including via ElDoc;
 
+* basic Imenu support;
+
 * ease of customisability; and
 
 * a cleaner codebase.
