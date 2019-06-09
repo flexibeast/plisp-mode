@@ -75,7 +75,7 @@
 
 ;; ### Syntax highlighting
 
-;; Enable syntax highlighting for a PicoLisp source buffer with `M-x picolisp-mode'. 
+;; Enable syntax highlighting for a PicoLisp source buffer with `M-x picolisp-mode'.
 
 ;; ### REPL
 
@@ -146,7 +146,6 @@
 ;; [GNU General Public License version 3](http://www.gnu.org/licenses/gpl.html), or (at your option) any later version.
 
 ;;; Code:
-
 
 ;;
 ;; User-customisable settings.
@@ -246,7 +245,6 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
   '((((background light)) :foreground "blue"))
   "Face for PicoLisp transient symbols."
   :group 'picolisp-faces)
-
 
 ;;
 ;; Internal variables.
@@ -358,7 +356,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     (modify-syntax-entry ?V "_   " table)
     (modify-syntax-entry ?W "_   " table)
     (modify-syntax-entry ?X "_   " table)
-    (modify-syntax-entry ?Y "_   " table)    
+    (modify-syntax-entry ?Y "_   " table)
     (modify-syntax-entry ?Z "_   " table)
     (modify-syntax-entry ?a "_   " table)
     (modify-syntax-entry ?b "_   " table)
@@ -384,9 +382,9 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     (modify-syntax-entry ?v "_   " table)
     (modify-syntax-entry ?w "_   " table)
     (modify-syntax-entry ?x "_   " table)
-    (modify-syntax-entry ?y "_   " table)    
+    (modify-syntax-entry ?y "_   " table)
     (modify-syntax-entry ?z "_   " table)
-    
+
     ;; { and } delimit external symbol names.
     (modify-syntax-entry ?\{ "_   " table)
     (modify-syntax-entry ?\} "_   " table)
@@ -413,13 +411,13 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;;;
     ;;; Comment syntax.
     ;;;
-    
+
     (modify-syntax-entry ?# "<   " table)
 
     ;;;
     ;;; Quote syntax.
     ;;;
-    
+
     (modify-syntax-entry ?` "'   " table)
     (modify-syntax-entry ?' "'   " table)
     (modify-syntax-entry ?, "'   " table)
@@ -428,7 +426,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;;;
     ;;; Parenthesis syntax.
     ;;;
-    
+
     (modify-syntax-entry ?\( "()  " table)
     (modify-syntax-entry ?\) ")(  " table)
     (modify-syntax-entry ?\[ "(]  " table)
@@ -439,11 +437,10 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;;;
 
     (modify-syntax-entry ?\\ "\\   " table)
-    
-    table)
-  
-  "Syntax table used in `picolisp-mode'.")
 
+    table)
+
+  "Syntax table used in `picolisp-mode'.")
 
 ;;
 ;; Internal functions.
@@ -642,7 +639,6 @@ that can be identified by a simple regular expression RE."
              ((eq 'string (type-of (nth 2 fst)))
               nil)))))))
 
-
 ;;
 ;; User-facing functions.
 ;;
@@ -753,7 +749,6 @@ specified by `picolisp-documentation-method'."
     (make-comint "picolisp-repl" picolisp-pil-executable nil (if picolisp-repl-debug-p "+" nil))
     (switch-to-buffer "*picolisp-repl*")
     (picolisp-repl-mode)))
-
 
 ;; --
 
