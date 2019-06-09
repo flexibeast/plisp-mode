@@ -477,8 +477,9 @@ This function thus overrides those overrides, and:
 
 * ensures that the value of `eldoc-documentation-function' is
   `picolisp--eldoc-function'."
-  (slime-mode 0)
-  (slime-autodoc-mode 0)
+  (when (require 'slime nil :noerror)
+    (slime-mode 0)
+    (slime-autodoc-mode 0))
   (make-local-variable 'eldoc-documentation-function)
   (setq eldoc-documentation-function #'picolisp--eldoc-function))
 
