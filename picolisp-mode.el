@@ -291,7 +291,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
 (defvar picolisp-font-lock-keywords
   `(("\\_<\\(T\\|NIL\\)\\_>"
      (1 'picolisp-global-constant-face t))
-    ("\\(\\*[[:alpha:]]+\\)"
+    ("\\(\\*[^]\\\"'(),[`~{}[:space:]]+\\)"
      (1 'picolisp-global-variable-face t))
     ("\\(\\+[a-z]\\S-*\\)"
      (1 'picolisp-abstract-class-face t))
