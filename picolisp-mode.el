@@ -297,7 +297,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
      (1 'picolisp-abstract-class-face t))
     ("\\(\\+[A-Z][[:alpha:]]*\\)"
      (1 'picolisp-normal-class-face t))
-    (,(concat "\\((\\)\\_<\\(" picolisp-builtins-regex "\\)\\_>")
+    (,(concat "\\((\\|\\[\\)\\_<\\(" picolisp-builtins-regex "\\)\\_>")
      (1 'default t)
      (2 'picolisp-builtin-face t))
     ("(\\(_\\S-+\\)"
@@ -329,8 +329,12 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ;; Comment syntax.
     (modify-syntax-entry ?\# "<   " table)
 
+    ;; '[' and ']' can delimit sexps.
+    (modify-syntax-entry ?\[ "(]  " table)
+    (modify-syntax-entry ?\] ")[  " table)
+
     table)
-  
+
   "Syntax table used in `picolisp-mode'.")
 
 
