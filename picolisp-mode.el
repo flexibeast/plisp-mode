@@ -307,7 +307,7 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
     ("\\(\".+?\"\\)"
      (1 'picolisp-transient-symbol-face t))
     ("^.*?\\(#+.*\\)$"
-     (1 'picolisp-comment-face)))
+     (1 'picolisp-comment-face t)))
   "Regexes for syntax-highlighting `picolisp-mode' buffers.")
 
 ;;
