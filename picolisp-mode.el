@@ -121,9 +121,7 @@
 
 ;; * Handle edge-cases in reference documentation structure:
 
-;;  * `picolisp-describe-symbol' failures;
-
-;;  * `picolisp--eldoc-function' fails on e.g. `c[ad]*ar'.
+;;   * `picolisp-describe-symbol' failures.
 
 ;; <a name="issues"></a>
 
@@ -395,12 +393,21 @@ This function thus overrides those overrides, and:
               (cond
                ((eq 'cons (type-of (nth 2 fst)))
                 (if (string= sym (cdaadr (nth 2 fst)))
-                    (setq result (concat (propertize (concat sym ", ") 'face 'picolisp-builtin-face)
-                                         (nth 2 (car (cdr (cdr (nth 2 fst)))))))))
-               ;; Ignore edge-cases in the documentation structure, such
-               ;; as the documentation for `c[ad]*ar'.
+                    (setq result (concat (propertize sym 'face 'picolisp-builtin-face)
+                                         ", "
+                                         (nth 2 (caddr (nth 2 fst)))))))
+               ;; Handle the documentation for `c[ad]*[ad]r'.
                ((eq 'string (type-of (nth 2 fst)))
-                (setq result nil))))))
+                (if (string= "cXr" (cdaadr (nth 59 fst)))
+                    (setq result (concat (propertize "c[ad]*ar" 'face 'picolisp-builtin-face)
+                                         ", "
+                                         "(c[ad]*ar 'var) -> any"
+                                         "; "
+                                         (propertize "c[ad]*dr" 'face 'picolisp-builtin-face)
+                                         ", "
+                                         "(c[ad]*dr 'lst) -> any"))
+                  ;; Ignore any other edge-cases in the documentation structure.
+                  (setq result nil)))))))
       result)))
 
 (defun picolisp--extract-reference-documentation (sym)
@@ -529,17 +536,24 @@ that can be identified by a simple regular expression RE."
         (if (eq 'dt (car-safe fst))
             (cond
              ((eq 'cons (type-of (nth 2 fst)))
-              (if (string= sym (cdr (car (car (cdr (nth 2 fst))))))
+              (if (string= sym (cdaadr (nth 2 fst)))
                   (progn
                     (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
                     (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'picolisp-builtin-face) "\n\n"))
                     (shr-insert-document snd)
                     (goto-char (point-min))
                     (help-mode))))
-             ;; Ignore edge-cases in the documentation structure, such
-             ;; as the documentation for `class'.
              ((eq 'string (type-of (nth 2 fst)))
-              nil)))))))
+              ;; Handle the documentation for `c[ad]*[ad]r'.
+              (if (string= "cXr" (cdaadr (nth 59 fst)))
+                  (progn
+                    (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - 'cXr' *")))
+                    (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize "c[ad]*[ad]r" 'face 'picolisp-builtin-face) "\n\n"))
+                    (shr-insert-document snd)
+                    (goto-char (point-min))
+                    (help-mode))
+                ;; Ignore any other edge-cases in the documentation structure.
+                nil))))))))
 
 
 ;;
