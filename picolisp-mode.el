@@ -207,6 +207,11 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
   "Face for PicoLisp abstract classes."
   :group 'picolisp-faces)
 
+(defface picolisp-at-mark-face
+  '((t :inherit font-lock-variable-name-face))
+  "Face for PicoLisp at-marks."
+  :group 'picolisp-faces)
+
 (defface picolisp-builtin-face
   '((t :inherit font-lock-builtin-face))
   "Face for PicoLisp builtins."
@@ -306,6 +311,8 @@ Must be `t' to access documentation via `picolisp-describe-symbol'."
      (1 'picolisp-method-face t))
     ("\\(\".+?\"\\)"
      (1 'picolisp-transient-symbol-face t))
+    ("\\(@[0-9A-Z]?\\)"
+     (1 'picolisp-at-mark-face t))
     ("^.*?\\(#+.*\\)$"
      (1 'picolisp-comment-face t)))
   "Regexes for syntax-highlighting `picolisp-mode' buffers.")
