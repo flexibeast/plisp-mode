@@ -385,48 +385,53 @@ This function thus overrides those overrides, and:
   (let* ((sym (symbol-name (symbol-at-point)))
          (dl (picolisp--extract-reference-documentation sym))
          (result nil))
-    (unless (string= "nil" sym)
-      (dotimes (i (/ (length dl) 2))
-        (let ((fst (nth (* i 2) dl))
-              (snd (nth (1+ (* i 2)) dl)))
-          (if (eq 'dt (car-safe fst))
-              (cond
-               ((eq 'cons (type-of (nth 2 fst)))
-                (if (string= sym (cdaadr (nth 2 fst)))
-                    (setq result (concat (propertize sym 'face 'picolisp-builtin-face)
-                                         ", "
-                                         (nth 2 (caddr (nth 2 fst)))))))
-               ;; Handle the documentation for `c[ad]*[ad]r'.
-               ((eq 'string (type-of (nth 2 fst)))
-                (if (string= "cXr" (cdaadr (nth 59 fst)))
-                    (setq result (concat (propertize "c[ad]*ar" 'face 'picolisp-builtin-face)
-                                         ", "
-                                         "(c[ad]*ar 'var) -> any"
-                                         "; "
-                                         (propertize "c[ad]*dr" 'face 'picolisp-builtin-face)
-                                         ", "
-                                         "(c[ad]*dr 'lst) -> any"))
-                  ;; Ignore any other edge-cases in the documentation structure.
-                  (setq result nil)))))))
-      result)))
+    (if (string-or-null-p dl)
+        (if (y-or-n-p "Documentation not found. Turn off Eldoc mode in this buffer? ")
+            (eldoc-mode 0))
+      (unless (string= "nil" sym)
+        (dotimes (i (/ (length dl) 2))
+          (let ((fst (nth (* i 2) dl))
+                (snd (nth (1+ (* i 2)) dl)))
+            (if (eq 'dt (car-safe fst))
+                (cond
+                 ((eq 'cons (type-of (nth 2 fst)))
+                  (if (string= sym (cdaadr (nth 2 fst)))
+                      (setq result (concat (propertize sym 'face 'picolisp-builtin-face)
+                                           ", "
+                                           (nth 2 (caddr (nth 2 fst)))))))
+                 ;; Handle the documentation for `c[ad]*[ad]r'.
+                 ((eq 'string (type-of (nth 2 fst)))
+                  (if (string= "cXr" (cdaadr (nth 59 fst)))
+                      (setq result (concat (propertize "c[ad]*ar" 'face 'picolisp-builtin-face)
+                                           ", "
+                                           "(c[ad]*ar 'var) -> any"
+                                           "; "
+                                           (propertize "c[ad]*dr" 'face 'picolisp-builtin-face)
+                                           ", "
+                                           "(c[ad]*dr 'lst) -> any"))
+                    ;; Ignore any other edge-cases in the documentation structure.
+                    (setq result nil)))))))))
+    result))
 
 (defun picolisp--extract-reference-documentation (sym)
   "Helper function to extract the 'Function Reference' definition
 list from the PicoLisp documentation, where SYM is the symbol being
 looked up."
-  (let* ((char (progn
+  (let* ((dl "Documentation not found. Please check the value of `picolisp-documentation-directory'")
+         (char (progn
                  (string-match "^[[:punct:]]*\\([[:punct:]]\\|[[:alpha:]]\\)" sym)
                  (upcase (match-string 1 sym))))
          (doc (if (string-match "[[:alpha:]]" char)
-                  (concat picolisp-documentation-directory "ref" char ".html")
-                (concat picolisp-documentation-directory "ref_.html")))
-         (bfr (generate-new-buffer " *PicoLisp documentation source*"))
-         (dom (progn
-                (switch-to-buffer bfr)
-                (insert-file-contents doc)
-                (libxml-parse-html-region (point-min) (point-max))))
-         (dl (nth 5 (nth 3 dom))))
-    (kill-buffer bfr)
+                  (concat picolisp-documentation-directory "/ref" char ".html")
+                (concat picolisp-documentation-directory "/ref_.html"))))
+    (if (file-readable-p doc)
+        (let* ((bfr (generate-new-buffer " *PicoLisp documentation source*"))
+               (dom (progn
+                      (switch-to-buffer bfr)
+                      (insert-file-contents doc)
+                      (libxml-parse-html-region (point-min) (point-max)))))
+          (setq dl (nth 5 (nth 3 dom)))
+          (kill-buffer bfr)))
     dl))
 
 (defun picolisp--font-lock-syntactic-face-function (state)
@@ -530,6 +535,8 @@ that can be identified by a simple regular expression RE."
                    (> emacs-minor-version 3)))
     (error "Emacs 24.4 or greater required"))
   (let ((dl (picolisp--extract-reference-documentation sym)))
+    (if (string-or-null-p dl)
+        (user-error dl))
     (dotimes (i (/ (length dl) 2))
       (let ((fst (nth (* i 2) dl))
             (snd (nth (1+ (* i 2)) dl)))
