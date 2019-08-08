@@ -85,7 +85,9 @@
 
 ;; Access documentation for the function at point with `C-c C-d' (`picolisp-describe-symbol'). By default, documentation will be displayed via the `lynx' HTML browser. However, one can set the value of `picolisp-documentation-method' to either a string containing the absolute path to an alternative browser, or - for users of Emacs 24.4 and above - to the symbol `picolisp--shr-documentation'; this function uses the `shr' library to display the documentation in an Emacs buffer. The absolute path to the documentation is specified via `picolisp-documentation-directory', and defaults to `/usr/share/doc/picolisp/'.
 
-;; ElDoc support is available; note, however, that documentation is not yet accessible for some symbols - in particular, the `c[ad]*ar' functions - due to edge-cases in the reference documentation structure.
+;; Eldoc support is available.
+
+;; If for some reason the PicoLisp documentation is not installed on the system, and cannot be installed, setting `picolisp-documentation-unavailable' to `t' will prevent `picolisp-mode' from trying to provide documentation.
 
 ;; ### Commenting
 
@@ -115,13 +117,7 @@
 
 ;; ## TODO
 
-;; * Implement `pilIndent' in Emacs Lisp, make available as a fallback when `pilIndent' is not available.
-
 ;; * Fix misalignment of single-'#' comments upon newline.
-
-;; * Handle edge-cases in reference documentation structure:
-
-;;   * `picolisp-describe-symbol' failures.
 
 ;; <a name="issues"></a>
 
