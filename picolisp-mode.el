@@ -49,6 +49,7 @@
 ;; - [Usage](#usage)
 ;;  - [Syntax highlighting](#usage-highlighting)
 ;;  - [REPL](#repl)
+;;  - [Org Babel](#usage-org-babel)
 ;;  - [Documentation](#documentation)
 ;;  - [Commenting](#commenting)
 ;;  - [Indentation](#indentation)
@@ -80,6 +81,14 @@
 ;; ### REPL
 
 ;; Start a `pil' REPL session with `M-x picolisp-repl' or, from a `picolisp-mode' buffer, with `C-c C-r' (`picolisp-repl').
+
+;; <a name='usage-org-babel'></a>
+
+;; ### Org Babel
+
+;; Support for Org Babel sessions is available via the `inferior-picolisp' feature, a fork of [tj64's `inferior-picolisp'](https://github.com/tj64/picolisp-mode/) stripped down to only provide the minimum necessary for Org Babel session support, and modified to be compatible with this package.
+
+;; Load it with `(require 'inferior-picolisp)', and make sure the `org-babel-picolisp-cmd' variable defined by `ob-picolisp' is correctly specified for your system.
 
 ;; ### Documentation
 
