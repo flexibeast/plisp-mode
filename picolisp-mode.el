@@ -30,7 +30,7 @@
 
 ;; `picolisp-mode' provides a major mode for PicoLisp programming.
 
-;; This package is not based on, nor connected with, the PicoLisp support for Emacs provided in [the PicoLisp distribution](http://software-lab.de/down.html), or the more recently [updated version of that support](https://github.com/tj64/picolisp-mode). At this stage, the main advantages provided by this package are:
+;; The `picolisp-mode' in this package is not based on, nor connected with, the PicoLisp support for Emacs provided in [the PicoLisp distribution](http://software-lab.de/down.html), or the more recently [updated version of that support](https://github.com/tj64/picolisp-mode). At this stage, the main advantages provided by this package are:
 
 ;; * an actively maintained and supported system;
 
