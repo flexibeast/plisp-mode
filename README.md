@@ -9,7 +9,7 @@ This package is not based on, nor connected with, the PicoLisp support for Emacs
 
 * an actively maintained and supported system;
 
-* access to the PicoLisp reference documentation, including via ElDoc;
+* access to the PicoLisp reference documentation, including via Eldoc;
 
 * basic Imenu support;
 
