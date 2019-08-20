@@ -1,8 +1,8 @@
 ;;; inferior-picolisp.el --- Org Babel session support for picolisp-mode
 
-;; Copyright (C) 2009-2019  Guillerme R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
+;; Copyright (C) 2009-2019  Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
 
-;; Author: Guillerme R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
+;; Author: Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
 ;; Maintainer: Alexis <flexibeast@gmail.com>
 ;; URL: https://github.com/flexibeast/picolisp-mode
 ;; Keywords: picolisp, lisp, programming, org
@@ -10,15 +10,15 @@
 ;;
 ;; This file is NOT part of GNU Emacs.
 ;;
-;; This program is free software: you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation, either version 3 of the License, or
-;; (at your option) any later version.
+;; This program is free software: you can redistribute it and/or
+;; modify it under the terms of the GNU General Public License as
+;; published by the Free Software Foundation, either version 3 of the
+;; License, or (at your option) any later version.
 
-;; This program is distributed in the hope that it will be useful,
-;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-;; GNU General Public License for more details.
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
@@ -27,7 +27,13 @@
 
 ;;; Commentary:
 
-;; A fork of tj64's `inferior-picolisp' (https://github.com/tj64/picolisp-mode/), stripped down to only provide the minimum necessary for Org Babel session support, and modified to be compatible with flexibeast's `picolisp-mode' (https://github.com/flexibeast/picolisp-mode/). Initial work on the fork, removing unneeded functionality, was done by cryptorick (https://github.com/cryptorick).
+;; A fork of tj64's `inferior-picolisp'
+;; (https://github.com/tj64/picolisp-mode/), stripped down to only
+;; provide the minimum necessary for Org Babel session support, and
+;; modified to be compatible with flexibeast's `picolisp-mode'
+;; (https://github.com/flexibeast/picolisp-mode/). Initial work on the
+;; fork, removing unneeded functionality, was done by cryptorick
+;; (https://github.com/cryptorick).
 
 ;;; Code:
 
