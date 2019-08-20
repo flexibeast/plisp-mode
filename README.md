@@ -80,7 +80,7 @@ Jolitz](https://github.com/tj64/picolisp-mode/), stripped down to
 only provide the minimum necessary for Org Babel session support,
 and modified to be compatible with this package.
 
-Load it with `(require `inferior-picolisp)', and make sure the
+Load it with `(require 'inferior-picolisp)`, and make sure the
 `org-babel-picolisp-cmd` variable defined by `ob-picolisp` is
 correctly specified for your system.
 
