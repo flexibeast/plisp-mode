@@ -1,4 +1,4 @@
-;;; picolisp-mode.el --- Major mode for PicoLisp programming.
+;;; picolisp-mode.el --- [ Obsolete; use 'plisp-mode' instead ]
 
 ;; Copyright (C) 2014-2019  Alexis <flexibeast@gmail.com>
 
@@ -212,6 +212,10 @@
 
 ;;; Code:
 
+
+(defun picolisp-warn-obsolete ()
+  (message-box "This 'picolisp-mode', maintained by https://github.com/flexibeast/, has been obsoleted by the 'plisp-mode' provided by the 'plisp-mode' package; please use that instead."))
+(add-to-list 'after-load-alist '(picolisp-mode . (picolisp-warn-obsolete)))
 
 ;;
 ;; User-customisable settings.

@@ -38,6 +38,10 @@
 ;;; Code:
 
 
+(defun inferior-picolisp-warn-obsolete ()
+  (message-box "This 'inferior-picolisp', maintained by https://github.com/flexibeast/, has been obsoleted by the 'inferior-plisp' provided by the 'plisp-mode' package; please use that instead."))
+(add-to-list 'after-load-alist '(inferior-picolisp . (inferior-picolisp-warn-obsolete)))
+
 (require 'comint)
 
 ;;
