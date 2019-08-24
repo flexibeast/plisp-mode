@@ -245,6 +245,18 @@ is run)."
   (setq inferior-plisp-buffer "*picolisp*")
   (pop-to-buffer "*picolisp*"))
 
+;;;###autoload
+(defun inferior-plisp-support-ob-picolisp ()
+  "Enable support for `ob-picolisp'.
+
+Needs `inferior-picolisp-provide-inferior-picolisp' set to `t'."
+  (interactive)
+  (if inferior-plisp-provide-inferior-picolisp
+      (progn
+        (provide 'inferior-picolisp)
+        (defalias 'run-picolisp 'inferior-plisp-run-picolisp))
+    (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))
+
 ;;;###autoload (add-hook 'same-window-buffer-names "*picolisp*")
 (define-derived-mode inferior-plisp-mode comint-mode "Inferior PicoLisp"
   "Major mode for interacting with an inferior PicoLisp process.
@@ -267,13 +279,8 @@ documentation for variable `inferior-plisp-buffer'."
 
 ;; --
 
+(inferior-plisp-support-ob-picolisp)
 (run-hooks 'inferior-plisp-load-hook)
-
-(if inferior-plisp-provide-inferior-picolisp
-    (progn
-      (provide 'inferior-picolisp)
-      (defalias 'run-picolisp 'inferior-plisp-run-picolisp)))
-
 (provide 'inferior-plisp)
 
 ;;; inferior-plisp.el ends here

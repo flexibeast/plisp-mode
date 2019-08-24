@@ -106,9 +106,10 @@
 ;; only provide the minimum necessary for Org Babel session support,
 ;; and modified to be compatible with this package.
 
-;; Load it with `(require 'inferior-plisp)', and make sure the
-;; `org-babel-picolisp-cmd' variable defined by `ob-picolisp' is
-;; correctly specified for your system.
+;; Load it with `(require 'inferior-plisp)', or add
+;; `(inferior-plisp-support-ob-picolisp)' to your init file, and make
+;; sure the `org-babel-picolisp-cmd' variable defined by `ob-picolisp'
+;; is correctly specified for your system.
 
 ;; By default, `inferior-plisp' provides the feature
 ;; `inferior-picolisp' required by `ob-picolisp'. To use another
