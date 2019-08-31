@@ -254,7 +254,8 @@ Needs `inferior-picolisp-provide-inferior-picolisp' set to `t'."
   (if inferior-plisp-provide-inferior-picolisp
       (progn
         (provide 'inferior-picolisp)
-        (defalias 'run-picolisp 'inferior-plisp-run-picolisp))
+        (defalias 'run-picolisp 'inferior-plisp-run-picolisp)
+        (plisp-support-ob-picolisp))
     (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))
 
 ;;;###autoload (add-hook 'same-window-buffer-names "*picolisp*")
