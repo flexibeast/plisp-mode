@@ -69,7 +69,7 @@ plisp-mode</kbd>.
 ### REPL
 
 Start a `pil` REPL session with <kbd>M-x plisp-repl</kbd> or, from a
-`plisp-mode` buffer, with <kbd>C-c C-r</kbd> (`plisp-repl`).
+`plisp-mode` buffer, with <kbd>C-c C-i</kbd> (`plisp-repl`).
 
 <a name='inferior-picolisp'></a>
 

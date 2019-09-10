@@ -94,7 +94,7 @@
 ;; ### REPL
 
 ;; Start a `pil' REPL session with `M-x plisp-repl' or, from a
-;; `plisp-mode' buffer, with `C-c C-r' (`plisp-repl').
+;; `plisp-mode' buffer, with `C-c C-i' (`plisp-repl').
 
 ;; <a name='inferior-picolisp'></a>
 
@@ -408,7 +408,7 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
 (define-key plisp-mode-map (kbd "C-c C-;") 'plisp-comment-region)
 (define-key plisp-mode-map (kbd "C-c C-:") 'plisp-uncomment-region)
 (define-key plisp-mode-map (kbd "C-c C-d") 'plisp-describe-symbol)
-(define-key plisp-mode-map (kbd "C-c C-r") 'plisp-repl)
+(define-key plisp-mode-map (kbd "C-c C-i") 'plisp-repl)
 (define-key plisp-mode-map (kbd "C-c M-q") 'plisp-indent-region)
 (if plisp-use-inferior-plisp
     (progn
@@ -528,7 +528,7 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
              ["Send definition" (inferior-plisp-send-definition) :keys "M-C-x"]
              ["Send definition and go" (inferior-plisp-send-definition-and-go) :keys "C-c M-e"]
              ["Switch to *picolisp* buffer" (inferior-plisp-switch-to-picolisp) :keys "C-c C-x"]))
-      ["PicoLisp REPL" (plisp-repl) :keys "C-c C-r"]
+      ["PicoLisp REPL" (plisp-repl) :keys "C-c C-i"]
       ["Customize" (customize-group 'plisp) t])))
 
 (defun plisp--disable-slime-modes ()
