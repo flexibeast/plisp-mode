@@ -29,9 +29,10 @@ main advantages provided by this package are:
 - [Features](#features)
 - [Installation](#installation)
 - [Usage](#usage)
- - [Syntax highlighting](#usage-highlighting)
+ - [Syntax highlighting](#highlighting)
  - [REPL](#repl)
- - [Org Babel](#usage-org-babel)
+ - [Inferior PicoLisp](#inferior-picolisp)
+  - [Org Babel](#org-babel)
  - [Documentation](#documentation)
  - [Commenting](#commenting)
  - [Indentation](#indentation)
@@ -58,38 +59,75 @@ MELPA](http://melpa.org/#/plisp-mode), or put the
 
 ## Usage
 
-<a name='usage-highlighting'></a>
+<a name='highlighting'></a>
 
 ### Syntax highlighting
 
-Enable syntax highlighting for a PicoLisp source buffer with `M-x
-plisp-mode'.
+Enable syntax highlighting for a PicoLisp source buffer with <kbd>M-x
+plisp-mode</kbd>.
 
 ### REPL
 
 Start a `pil` REPL session with <kbd>M-x plisp-repl</kbd> or, from a
 `plisp-mode` buffer, with <kbd>C-c C-r</kbd> (`plisp-repl`).
 
-<a name='usage-org-babel'></a>
+<a name='inferior-picolisp'></a>
 
-### Org Babel
+### Inferior PicoLisp
 
-Support for Org Babel sessions is available via the
-`inferior-plisp` feature, a fork of the [`inferior-picolisp`
-library written by Guillermo Palavecino and Thorsten
-Jolitz](https://github.com/tj64/picolisp-mode/), stripped down to
-only provide the minimum necessary for Org Babel session support,
-and modified to be compatible with this package.
+This package provides the `inferior-plisp` feature, a fork of the
+[`inferior-picolisp` library written by Guillermo Palavecino and
+Thorsten Jolitz](https://github.com/tj64/picolisp-mode/), modified
+to be compatible with `plisp-mode`.
 
-Load it with `(require 'inferior-plisp)`, or add
-`(inferior-plisp-support-ob-picolisp)` to your init file, and make
-sure the `org-babel-picolisp-cmd` variable defined by `ob-picolisp`
-is correctly specified for your system.
+By default, `inferior-plisp` is loaded by `plisp-mode`; to disable
+this, set the variable `plisp-use-inferior-plisp` to `nil`. It can
+still be manually loaded with `(require 'inferior-plisp)`.
+
+With `inferior-plisp` loaded, the following bindings are available
+in `plisp-mode` and `plisp-repl-mode`:
+
+* <kbd>M-C-x</kbd> / <kbd>C-c C-e</kbd> : Send the current definition to the inferior PicoLisp
+  process (`inferior-plisp-send-definition`).
+
+* <kbd>C-x C-e</kbd> : Send the last sexp before point to the inferior
+  PicoLisp process (`inferior-plisp-send-last-sexp`).
+
+* <kbd>C-c M-e</kbd> : Send the current definition to the inferior PicoLisp
+  process and switch to its buffer
+  (`inferior-plisp-send-definition-and-go`).
+
+* <kbd>C-c C-r</kbd> : Send the region to the inferior PicoLisp process
+  (`inferior-plisp-send-region`).
+
+* <kbd>C-c M-r</kbd> : Send the region to the inferior PicoLisp process and
+  switch to its buffer (`inferior-plisp-send-region-and-go`).
+
+* <kbd>C-c C-x</kbd> : Switch to the inferior PicoLisp buffer
+  (`inferior-plisp-switch-to-picolisp`).
+
+Multiple inferior PicoLisp processes can be created and used; the
+documentation for the variable `inferior-plisp-picolisp-buffer`
+provides more details.
 
 By default, `inferior-plisp` provides the feature
 `inferior-picolisp` required by `ob-picolisp`. To use another
 package to provide `inferior-picolisp`, set the
 `inferior-plisp-provide-inferior-picolisp` variable to `nil`.
+
+<a name='org-babel'></a>
+
+#### Org Babel
+
+By default, `plisp-mode` registers itself as providing the
+`picolisp-mode` needed to edit Org Babel PicoLisp source blocks
+with `org-edit-special`. If you wish to disable this, set the
+variable `plisp-provide-picolisp-mode` to `nil`.
+
+`inferior-plisp` can support Org Babel sessions: add
+`(inferior-plisp-support-ob-picolisp)` to your init file, and make
+sure the `org-babel-picolisp-cmd` variable defined by `ob-picolisp`
+is correctly specified for your system.
 
 ### Documentation
 
@@ -143,14 +181,15 @@ customize-group.
 
 PicoLisp's creator is opposed to syntax highlighting of symbols in
 PicoLisp, for [good
-reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However,
-some - such as the author of this package! - feel that, even taking
-such issues into consideration, the benefits can outweigh the
-costs. (For example, when learning PicoLisp, it can be useful to
-get immediate visual feedback about unintentionally redefining a
-PicoLisp 'builtin'.) To accommodate both views, syntax highlighting
-can be enabled or disabled via the `plisp-syntax-highlighting-p`
-variable; by default, it is set to `t` (enabled).
+reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html).
+However, some - such as the author of this package! - feel that,
+even taking such issues into consideration, the benefits can
+outweigh the costs. (For example, when learning PicoLisp, it can be
+useful to get immediate visual feedback about unintentionally
+redefining a PicoLisp 'builtin'.) To accommodate both views, syntax
+highlighting can be enabled or disabled via the
+`plisp-syntax-highlighting-p` variable; by default, it is set to
+`t` (enabled).
 
 <a name="note-slime"></a>
 
