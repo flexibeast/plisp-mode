@@ -168,14 +168,15 @@
 
 ;; PicoLisp's creator is opposed to syntax highlighting of symbols in
 ;; PicoLisp, for [good
-;; reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html). However,
-;; some - such as the author of this package! - feel that, even taking
-;; such issues into consideration, the benefits can outweigh the
-;; costs. (For example, when learning PicoLisp, it can be useful to
-;; get immediate visual feedback about unintentionally redefining a
-;; PicoLisp 'builtin'.) To accommodate both views, syntax highlighting
-;; can be enabled or disabled via the `plisp-syntax-highlighting-p'
-;; variable; by default, it is set to `t' (enabled).
+;; reasons](http://www.mail-archive.com/picolisp@software-lab.de/msg05019.html).
+;; However, some - such as the author of this package! - feel that,
+;; even taking such issues into consideration, the benefits can
+;; outweigh the costs. (For example, when learning PicoLisp, it can be
+;; useful to get immediate visual feedback about unintentionally
+;; redefining a PicoLisp 'builtin'.) To accommodate both views, syntax
+;; highlighting can be enabled or disabled via the
+;; `plisp-syntax-highlighting-p' variable; by default, it is set to
+;; `t' (enabled).
 
 ;; <a name="note-slime"></a>
 
@@ -250,8 +251,10 @@
 
 (defcustom plisp-documentation-method 'plisp--shr-documentation
   "System to be used to display PicoLisp documentation."
-  :type '(radio (function :tag "Function - must already be defined" :value 'plisp--shr-documentation)
-                (file :tag "HTML browser - absolute path" :value "/usr/bin/lynx"))
+  :type '(radio (function :tag "Function - must already be defined"
+                          :value 'plisp--shr-documentation)
+                (file :tag "HTML browser - absolute path"
+                      :value "/usr/bin/lynx"))
   :group 'plisp)
 
 (defcustom plisp-documentation-unavailable nil
@@ -546,7 +549,8 @@ via `plisp-font-lock-keywords'."
 associated methods and/or relations."
   (let ((classes '()))
     (goto-char (point-min))
-    (while (re-search-forward "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
+    (while (re-search-forward
+            "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
       (let ((class (match-string 1))
             (class-index (match-beginning 1))
             (members '())
@@ -556,16 +560,24 @@ associated methods and/or relations."
         (setq members `(("Definition" . ,class-index)))
         (save-excursion
           (setq next-class-index
-                (if (re-search-forward "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
+                (if (re-search-forward
+                     "^[[:space:]]*(class \\([+][[:alnum:]]+\\)" nil t)
                     (match-beginning 1)
                   (point-max))))
         (save-excursion
-          (while (re-search-forward "^[[:space:]]*(dm \\([[:alnum:]]+>\\)" next-class-index t)
-            (setq methods (append methods `((,(match-string 1) . ,(match-beginning 1)))))))
+          (while (re-search-forward "^[[:space:]]*(dm \\([[:alnum:]]+>\\)"
+                                    next-class-index
+                                    t)
+            (setq methods
+                  (append methods
+                          `((,(match-string 1) . ,(match-beginning 1)))))))
         (setq methods `(("Methods" . ,methods)))
         (save-excursion
-          (while (re-search-forward "^[[:space:]]*(rel \\([[:alnum:]]+\\)" next-class-index t)
-            (setq relations (append relations `((,(match-string 1) . ,(match-beginning 1)))))))
+          (while (re-search-forward
+                  "^[[:space:]]*(rel \\([[:alnum:]]+\\)" next-class-index t)
+            (setq relations
+                  (append relations
+                          `((,(match-string 1) . ,(match-beginning 1)))))))
         (setq relations `(("Relations" . ,relations)))
         (setq members (append members methods relations))
         (setq classes (append classes `((,class . ,members))))))
@@ -584,23 +596,31 @@ associated methods and/or relations."
             (obj-position (match-beginning 2)))
         (if (assoc obj-class objs)
             (setcdr (assoc obj-class objs)
-                    (append (cdr (assoc obj-class objs)) `((,obj-identifier . ,obj-position))))
+                    (append (cdr (assoc obj-class objs))
+                            `((,obj-identifier . ,obj-position))))
           (setq objs
-                (append objs `((,obj-class . ((,obj-identifier . ,obj-position)))))))))
+                (append objs
+                        `((,obj-class . ((,obj-identifier . ,obj-position)))))))))
     (setq objs `(("Database objects" . ,objs)))
     objs))
 
 (defun plisp--imenu-find-facts-and-rules ()
   "Internal function to find PicoLisp facts and/or rules."
-  (plisp--imenu-find-things "Facts and rules" "^[[:space:]]*(be \\([[:alnum:]]+\\))"))
+  (plisp--imenu-find-things
+   "Facts and rules"
+   "^[[:space:]]*(be \\([[:alnum:]]+\\))"))
 
 (defun plisp--imenu-find-functions ()
   "Internal function to find PicoLisp functions."
-  (plisp--imenu-find-things "Functions" "^[[:space:]]*(de \\([^*][[:alnum:]*+_]+\\)[[:space:]]+("))
+  (plisp--imenu-find-things
+   "Functions"
+   "^[[:space:]]*(de \\([^*][[:alnum:]*+_]+\\)[[:space:]]+("))
 
 (defun plisp--imenu-find-global-variables ()
   "Internal function to find PicoLisp global variables."
-  (plisp--imenu-find-things "Global variables" "^[[:space:]]*(de \\([*][[:alnum:]*+]+\\)[[:space:]]+"))
+  (plisp--imenu-find-things
+   "Global variables"
+   "^[[:space:]]*(de \\([*][[:alnum:]*+]+\\)[[:space:]]+"))
 
 (defun plisp--imenu-find-things (name re)
   "Internal function to find PicoLisp components of type NAME
@@ -608,7 +628,8 @@ that can be identified by a simple regular expression RE."
   (let ((things '()))
     (goto-char (point-min))
     (while (re-search-forward re nil t)
-      (setq things (append things `((,(match-string 1) . ,(match-beginning 1))))))
+      (setq things (append things
+                           `((,(match-string 1) . ,(match-beginning 1))))))
     (setq things `((,name . ,things)))
     things))
 
@@ -630,8 +651,17 @@ that can be identified by a simple regular expression RE."
                ((eq 'cons (type-of (nth 2 fst)))
                 (if (string= sym (cdaadr (nth 2 fst)))
                     (progn
-                      (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - '" sym "' *")))
-                      (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize sym 'face 'plisp-builtin-face) "\n\n"))
+                      (switch-to-buffer
+                       (generate-new-buffer
+                        (concat "*PicoLisp documentation - '" sym "' *")))
+                      (insert
+                       (concat
+                        (propertize "Symbol:"
+                                    'face '(foreground-color . "ForestGreen"))
+                        " "
+                        (propertize sym
+                                    'face 'plisp-builtin-face)
+                        "\n\n"))
                       (shr-insert-document snd)
                       (goto-char (point-min))
                       (help-mode))))
@@ -639,8 +669,16 @@ that can be identified by a simple regular expression RE."
                 ;; Handle the documentation for `c[ad]*[ad]r'.
                 (if (string= "cXr" (cdaadr (nth 59 fst)))
                     (progn
-                      (switch-to-buffer (generate-new-buffer (concat "*PicoLisp documentation - 'cXr' *")))
-                      (insert (concat (propertize "Symbol:" 'face '(foreground-color . "ForestGreen")) " " (propertize "c[ad]*[ad]r" 'face 'plisp-builtin-face) "\n\n"))
+                      (switch-to-buffer
+                       (generate-new-buffer
+                        (concat "*PicoLisp documentation - 'cXr' *")))
+                      (insert
+                       (concat
+                        (propertize "Symbol:"
+                                    'face '(foreground-color . "ForestGreen"))
+                        " "
+                        (propertize "c[ad]*[ad]r"
+                                    'face 'plisp-builtin-face) "\n\n"))
                       (shr-insert-document snd)
                       (goto-char (point-min))
                       (help-mode))
@@ -699,8 +737,9 @@ specified by `plisp-documentation-method'."
            ((eq 'symbol (type-of plisp-documentation-method))
             (plisp--shr-documentation sym))
            ((eq 'string (type-of plisp-documentation-method))
-            (start-process-shell-command "picolisp-doc" nil
-                                         (concat "pil -\"doc (car (nth (argv) 3)\" -bye - '" sym "' +")))
+            (start-process-shell-command
+             "picolisp-doc" nil
+             (concat "pil -\"doc (car (nth (argv) 3)\" -bye - '" sym "' +")))
            (t
             (error "Unexpected value type in plisp-documentation-method")))
         (message "No PicoLisp builtin at point.")))))
@@ -716,10 +755,11 @@ specified by `plisp-documentation-method'."
   (setq-local comment-start "#")
   (setq-local comment-start-skip "#+ *")
   (if plisp-syntax-highlighting-p
-      (setq-local font-lock-defaults '(plisp-font-lock-keywords
-                                       nil nil nil nil
-                                       (font-lock-syntactic-face-function
-                                        . plisp--font-lock-syntactic-face-function))))
+      (setq-local font-lock-defaults
+                  '(plisp-font-lock-keywords
+                    nil nil nil nil
+                    (font-lock-syntactic-face-function
+                     . plisp--font-lock-syntactic-face-function))))
   (setq-local eldoc-documentation-function #'plisp--eldoc-function)
   (plisp--create-plisp-mode-menu)
   (setq-local imenu-create-index-function 'plisp--imenu-create-index)
@@ -741,10 +781,11 @@ specified by `plisp-documentation-method'."
   (setq-local comment-start "#")
   (setq-local comment-start-skip "#+ *")
   (if plisp-syntax-highlighting-p
-      (setq-local font-lock-defaults '(plisp-font-lock-keywords
-                                       nil nil nil nil
-                                       (font-lock-syntactic-face-function
-                                        . plisp--font-lock-syntactic-face-function))))
+      (setq-local font-lock-defaults
+                  '(plisp-font-lock-keywords
+                    nil nil nil nil
+                    (font-lock-syntactic-face-function
+                     . plisp--font-lock-syntactic-face-function))))
   (setq-local eldoc-documentation-function #'plisp--eldoc-function))
 
 ;;;###autoload
@@ -756,7 +797,8 @@ specified by `plisp-documentation-method'."
              (add-to-list 'process-environment
                           (concat "BROWSER=" plisp-documentation-method))
            process-environment)))
-    (make-comint "picolisp-repl" plisp-pil-executable nil (if plisp-repl-debug-p "+" nil))
+    (make-comint "picolisp-repl"
+                 plisp-pil-executable nil (if plisp-repl-debug-p "+" nil))
     (switch-to-buffer "*picolisp-repl*")
     (plisp-repl-mode)))
 

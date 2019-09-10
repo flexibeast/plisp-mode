@@ -2,7 +2,9 @@
 
 ;; Copyright (C) 2009-2019  Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
 
-;; Author: Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
+;; Author: Guillermo R. Palavecine <grpala@gmail.com>
+;;         Thorsten Jolitz <tjolitz@gmail.com>
+;;         Alexis <flexibeast@gmail.com>
 ;; Maintainer: Alexis <flexibeast@gmail.com>
 ;; URL: https://github.com/flexibeast/picolisp-mode
 ;; Keywords: picolisp, lisp, programming, org
@@ -216,9 +218,11 @@ of `inferior-plisp-program-name').
 Runs the hook `inferior-plisp-mode-hook' (after the `comint-mode-hook'
 is run)."
 
-  (interactive (list (if current-prefix-arg
-                         (read-string "Run PicoLisp: " inferior-plisp-program-name)
-                       inferior-plisp-program-name)))
+  (interactive (list
+                (if current-prefix-arg
+                    (read-string "Run PicoLisp: "
+                                 inferior-plisp--command-line)
+                  inferior-plisp--command-line)))
   (message "Using `run-picolisp' from `inferior-plisp'.")
   (when (not (comint-check-proc "*picolisp*"))
     (let ((cmdlist (split-string cmd)))
