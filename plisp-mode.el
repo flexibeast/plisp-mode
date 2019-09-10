@@ -760,6 +760,17 @@ specified by `plisp-documentation-method'."
     (switch-to-buffer "*picolisp-repl*")
     (plisp-repl-mode)))
 
+;;;###autoload
+(defun plisp-support-ob-picolisp ()
+  "Enable (reachback) support for `ob-picolisp'."
+  (interactive)
+  (cond ((not (boundp 'inferior-plisp-provide-inferior-picolisp))
+         (error "Please ensure that the `inferior-plisp' feature is provided"))
+        (inferior-plisp-provide-inferior-picolisp
+         (defalias 'picolisp-mode 'plisp-mode)
+         (provide 'picolisp-mode))
+        (t (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'"))))
+
 
 ;; --
 
