@@ -1,4 +1,4 @@
-;;; inferior-plisp.el --- Org Babel session support for plisp-mode
+;;; inferior-plisp.el --- Run inferior PicoLisp processes
 
 ;; Copyright (C) 2009-2019  Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com>
 
@@ -30,12 +30,10 @@
 ;;; Commentary:
 
 ;; A fork of tj64's `inferior-picolisp'
-;; (https://github.com/tj64/picolisp-mode/), stripped down to only
-;; provide the minimum necessary for Org Babel session support, and
-;; modified to be compatible with `plisp-mode'
+;; (https://github.com/tj64/picolisp-mode/), modified to be compatible
+;; with `plisp-mode'
 ;; (https://github.com/flexibeast/plisp-mode/). Initial work on the
-;; fork, removing unneeded functionality, was done by cryptorick
-;; (https://github.com/cryptorick).
+;; fork was done by cryptorick (https://github.com/cryptorick).
 
 ;;; Code:
 
@@ -67,15 +65,10 @@ Defaults to a regexp ignoring all inputs of 0, 1, or 2 letters."
   :type 'hook
   :group 'inferior-plisp)
 
-(defcustom inferior-plisp-program-name "/usr/bin/pil"
-  "The name of the program used to run PicoLisp."
-  :type '(file :must-match t)
-  :group 'inferior-plisp)
-
 (defcustom inferior-plisp-provide-inferior-picolisp t
   "Compatibility option for `ob-picolisp'. 
 
-When set to `t', `inferior-plist' will register itself as
+When set to `t', `inferior-plisp' will register itself as
 providing the `inferior-picolisp' feature required by
 `ob-picolisp', and will alias the `run-picolisp' function to the
 `inferior-plisp-run-picolisp' function.
@@ -85,31 +78,34 @@ provide the `inferior-picolisp' feature."
   :type 'boolean
   :group 'inferior-plisp)
 
-(defvar inferior-plisp-buffer nil
+(defvar inferior-plisp-picolisp-buffer nil
   "The current PicoLisp process buffer.
 
 MULTIPLE PROCESS SUPPORT
 ==================================================================
 
-inferior-plisp.el supports, in a fairly simple fashion,
-running multiple PicoLisp processes. To run multiple PicoLisp
-processes, you start the first up with \\[run-picolisp]. It will
-be in a buffer named *picolisp*. Rename this buffer with
+`inferior-plisp' supports, in a fairly simple fashion, running
+multiple PicoLisp processes. To run multiple PicoLisp processes,
+you start the first up with \\[inferior-plisp-run-picolisp]. It
+will be in a buffer named *picolisp*. Rename this buffer with
 \\[rename-buffer]. You may now start up a new process with
-another \\[run-picolisp]. It will be in a new buffer, named
-*picolisp*. You can switch between the different process buffers
-with \\[switch-to-buffer].
+another \\[inferior-plisp-run-picolisp]. It will be in a new
+buffer, named *picolisp*. You can switch between the different
+process buffers with \\[switch-to-buffer].
 
-Whenever \\[inferior-plisp-run-picolisp] fires up a new process, it resets
-`inferior-plisp-buffer' to be the new process's buffer. If you
-only run one process, this will do the right thing. If you run
-multiple processes, you can change `inferior-plisp-buffer'
-to another process buffer with \\[set-variable].")
+Whenever \\[inferior-plisp-run-picolisp] starts a new process, it
+resets `inferior-plisp-picolisp-buffer' to be the new process'
+buffer. If you only run one process, this will do the right
+thing. If you run multiple processes, you can change
+`inferior-plisp-picolisp-buffer' to another process buffer with
+\\[set-variable].")
 
 
 ;;
 ;; Internal variables.
 ;;
+
+(defvar inferior-plisp--command-line "/usr/bin/pil +")
 
 (defvar inferior-plisp--emacs-as-editor-p nil
   "If non-nil, use `eedit.l' instead of `edit.l'.")
@@ -183,11 +179,25 @@ The line-editor is not needed when PicoLisp is run as an Emacs subprocess."
   (save-excursion
     (let ((end (point)))
       (backward-sexp)
-      (buffer-substring (point) end) ) ) )
+      (buffer-substring (point) end))))
 
 (defun inferior-plisp--input-filter (str)
   "Don't save anything matching `inferior-plisp-filter-regexp'."
   (not (string-match inferior-plisp-filter-regexp str)) )
+
+(defun inferior-plisp--picolisp-process ()
+  "Return the current PicoLisp process, starting one if necessary.
+
+See variable `inferior-plisp-picolisp-buffer'."
+  (unless (and inferior-plisp-picolisp-buffer
+               (get-buffer inferior-plisp-picolisp-buffer)
+               (comint-check-proc inferior-plisp-picolisp-buffer))
+    (inferior-plisp-interactively-start-process))
+  (or (get-buffer-process
+       (if (eq major-mode 'inferior-plisp-mode)
+           (current-buffer)
+         inferior-plisp-picolisp-buffer))
+      (error "No current process. See `inferior-plisp-picolisp-buffer'")))
 
 (defun inferior-plisp--reset-line-editor ()
   "Reset inbuilt PicoLisp line-editor to original state."
@@ -205,15 +215,24 @@ The line-editor is not needed when PicoLisp is run as an Emacs subprocess."
 ;; User-facing functions.
 ;;
 
+(defun inferior-plisp-interactively-start-process (&optional cmd)
+  "Start an inferior PicoLisp process.  Return the process started.
+
+Since this command is run implicitly, always ask the user for the
+command to run."
+  (save-window-excursion
+    (inferior-plisp-run-picolisp
+     (read-string "Run PicoLisp: " inferior-plisp--command-line))))
+
 ;;;###autoload
 (defun inferior-plisp-run-picolisp (cmd)
-  "Run an inferior Picolisp process, input and output via buffer `*picolisp*'.
+  "Run an inferior PicoLisp process, input and output via buffer `*picolisp*'.
 
 If there is a process already running in `*picolisp*', switch to
 that buffer.
 
-With argument, allows you to edit the command line (default is value
-of `inferior-plisp-program-name').
+With argument, allows you to edit the command line; default is value
+of `inferior-plisp--command-line'.
 
 Runs the hook `inferior-plisp-mode-hook' (after the `comint-mode-hook'
 is run)."
@@ -245,9 +264,53 @@ is run)."
                  (cons "@lib/edit.l" (cdr cmdlist))))))
       (inferior-plisp--reset-line-editor)
       (inferior-plisp-mode)))
-  (setq inferior-plisp-program-name cmd)
-  (setq inferior-plisp-buffer "*picolisp*")
+  (setq inferior-plisp--command-line cmd)
+  (setq inferior-plisp-picolisp-buffer "*picolisp*")
   (pop-to-buffer "*picolisp*"))
+
+(defun inferior-plisp-send-definition ()
+  "Send the current definition to the inferior PicoLisp process."
+  (interactive)
+  (save-excursion
+    (end-of-defun)
+    (let ((end (point)))
+      (beginning-of-defun)
+      (inferior-plisp-send-region
+       (point) (progn (forward-sexp) (point))))))
+
+(defun inferior-plisp-send-definition-and-go ()
+  "Send the current definition to the inferior PicoLisp,
+then switch to the process buffer."
+  (interactive)
+  (inferior-plisp-send-definition)
+  (inferior-plisp-switch-to-picolisp t))
+
+(defun inferior-plisp-send-last-sexp ()
+  "Send the previous sexp to the inferior PicoLisp process."
+  (interactive)
+  (inferior-plisp-send-region (save-excursion (backward-sexp) (point)) (point)))
+
+(defun inferior-plisp-send-region (start end)
+  "Send the current region to the inferior PicoLisp process."
+  (interactive "r")
+  (let ((region-substring
+         (replace-regexp-in-string "^\n"
+                                   ""
+                                   (buffer-substring start end))))
+    (progn
+      (comint-send-string
+       (inferior-plisp--picolisp-process)
+       (if (string= "" (car (last (split-string region-substring "\n"))))
+           region-substring
+         (concat region-substring "\n"))))))
+
+(defun inferior-plisp-send-region-and-go (start end)
+  "Send the current region to the inferior PicoLisp process,
+then switch to the process buffer."
+  (interactive "r")
+  (inferior-plisp-send-region start end)
+  (inferior-plisp-switch-to-picolisp t))
+
 
 ;;;###autoload
 (defun inferior-plisp-support-ob-picolisp ()
@@ -262,17 +325,31 @@ Needs `inferior-picolisp-provide-inferior-picolisp' set to `t'."
         (plisp-support-ob-picolisp))
     (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))
 
+(defun inferior-plisp-switch-to-picolisp (eob-p)
+  "Switch to the *picolisp* process buffer.
+
+With argument, position cursor at end of buffer."
+  (interactive "P")
+  (if (or (and inferior-plisp-picolisp-buffer
+               (get-buffer inferior-plisp-picolisp-buffer))
+          (inferior-plisp-interactively-start-process) )
+      (pop-to-buffer inferior-plisp-picolisp-buffer)
+    (error "No current process buffer. See `inferior-plisp-picolisp-buffer'") )
+  (when eob-p
+    (push-mark)
+    (goto-char (point-max))))
+
 ;;;###autoload (add-hook 'same-window-buffer-names "*picolisp*")
 (define-derived-mode inferior-plisp-mode comint-mode "Inferior PicoLisp"
   "Major mode for interacting with an inferior PicoLisp process.
 
-A PicoLisp process can be fired up with 'M-x run-picolisp'.
+A PicoLisp process can be started with 'M-x inferior-plisp-run-picolisp'.
 
 Customization: Entry to this mode runs the hooks on `comint-mode-hook' and
 `inferior-plisp-mode-hook' (in that order).
 
 For information on running multiple processes in multiple buffers, see
-documentation for variable `inferior-plisp-buffer'."
+documentation for the variable `inferior-plisp-picolisp-buffer'."
   ;; The following can be customised via `inferior-plisp-mode-hook'.
   (setq comint-prompt-regexp "^[^\n:?!]*[?!:]+ *")
   (setq comint-prompt-read-only nil)

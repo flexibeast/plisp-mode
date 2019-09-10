@@ -54,9 +54,10 @@
 ;; - [Features](#features)
 ;; - [Installation](#installation)
 ;; - [Usage](#usage)
-;;  - [Syntax highlighting](#usage-highlighting)
+;;  - [Syntax highlighting](#highlighting)
 ;;  - [REPL](#repl)
-;;  - [Org Babel](#usage-org-babel)
+;;  - [Inferior PicoLisp](#inferior-picolisp)
+;;   - [Org Babel](#org-babel)
 ;;  - [Documentation](#documentation)
 ;;  - [Commenting](#commenting)
 ;;  - [Indentation](#indentation)
@@ -83,7 +84,7 @@
 
 ;; ## Usage
 
-;; <a name='usage-highlighting'></a>
+;; <a name='highlighting'></a>
 
 ;; ### Syntax highlighting
 
@@ -95,26 +96,63 @@
 ;; Start a `pil' REPL session with `M-x plisp-repl' or, from a
 ;; `plisp-mode' buffer, with `C-c C-r' (`plisp-repl').
 
-;; <a name='usage-org-babel'></a>
+;; <a name='inferior-picolisp'></a>
 
-;; ### Org Babel
+;; ### Inferior PicoLisp
 
-;; Support for Org Babel sessions is available via the
-;; `inferior-plisp' feature, a fork of the [`inferior-picolisp'
-;; library written by Guillermo Palavecino and Thorsten
-;; Jolitz](https://github.com/tj64/picolisp-mode/), stripped down to
-;; only provide the minimum necessary for Org Babel session support,
-;; and modified to be compatible with this package.
+;; This package provides the `inferior-plisp' feature, a fork of the
+;; [`inferior-picolisp' library written by Guillermo Palavecino and
+;; Thorsten Jolitz](https://github.com/tj64/picolisp-mode/), modified
+;; to be compatible with `plisp-mode'.
 
-;; Load it with `(require 'inferior-plisp)', or add
-;; `(inferior-plisp-support-ob-picolisp)' to your init file, and make
-;; sure the `org-babel-picolisp-cmd' variable defined by `ob-picolisp'
-;; is correctly specified for your system.
+;; By default, `inferior-plisp' is loaded by `plisp-mode'; to disable
+;; this, set the variable `plisp-use-inferior-plisp' to `nil'. It can
+;; still be manually loaded with `(require 'inferior-plisp)'.
+
+;; With `inferior-plisp' loaded, the following bindings are available
+;; in `plisp-mode' and `plisp-repl-mode':
+
+;; * `M-C-x' / `C-c C-e' : Send the current definition to the inferior PicoLisp
+;;   process (`inferior-plisp-send-definition').
+
+;; * `C-x C-e' : Send the last sexp before point to the inferior
+;;   PicoLisp process (`inferior-plisp-send-last-sexp').
+
+;; * `C-c M-e' : Send the current definition to the inferior PicoLisp
+;;   process and switch to its buffer
+;;   (`inferior-plisp-send-definition-and-go').
+
+;; * `C-c C-r' : Send the region to the inferior PicoLisp process
+;;   (`inferior-plisp-send-region').
+
+;; * `C-c M-r' : Send the region to the inferior PicoLisp process and
+;;   switch to its buffer (`inferior-plisp-send-region-and-go').
+
+;; * `C-c C-x' : Switch to the inferior PicoLisp buffer
+;;   (`inferior-plisp-switch-to-picolisp').
+
+;; Multiple inferior PicoLisp processes can be created and used; the
+;; documentation for the variable `inferior-plisp-picolisp-buffer'
+;; provides more details.
 
 ;; By default, `inferior-plisp' provides the feature
 ;; `inferior-picolisp' required by `ob-picolisp'. To use another
 ;; package to provide `inferior-picolisp', set the
 ;; `inferior-plisp-provide-inferior-picolisp' variable to `nil'.
+
+;; <a name='org-babel'></a>
+
+;; #### Org Babel
+
+;; By default, `plisp-mode' registers itself as providing the
+;; `picolisp-mode' needed to edit Org Babel PicoLisp source blocks
+;; with `org-edit-special'. If you wish to disable this, set the
+;; variable `plisp-provide-picolisp-mode' to `nil'.
+
+;; `inferior-plisp' can support Org Babel sessions: add
+;; `(inferior-plisp-support-ob-picolisp)' to your init file, and make
+;; sure the `org-babel-picolisp-cmd' variable defined by `ob-picolisp'
+;; is correctly specified for your system.
 
 ;; ### Documentation
 
@@ -266,6 +304,23 @@ the system, and cannot be installed, setting this to `t' will prevent
   :type 'boolean
   :group 'plisp)
 
+(defcustom plisp-provide-picolisp-mode t
+  "Compatibility option for `ob-picolisp'.
+
+When set to `t', `plisp-mode' will register itself as providing
+the `picolisp-mode' feature required by `ob-picolisp' to edit
+PicoLisp source blocks via `org-edit-special'.
+
+Set this to `nil' to if you wish to use another package to
+provide the `picolisp-mode' feature to `ob-picolisp'."
+  :type 'boolean
+  :group 'plisp)
+
+(defcustom plisp-use-inferior-plisp t
+  "Whether to enable `inferior-plisp' functionality."
+  :type 'boolean
+  :group 'plisp)
+
 (defcustom plisp-repl-debug-p t
   "Whether to enable debug mode in the REPL.
 Must be `t' to access documentation via `plisp-describe-symbol'."
@@ -337,6 +392,14 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
   :group 'plisp-faces)
 
 
+;; Initialise.
+;;
+;;
+
+(if plisp-use-inferior-plisp
+    (require 'inferior-plisp))
+
+
 ;;
 ;; Internal variables.
 ;;
@@ -347,9 +410,28 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
 (define-key plisp-mode-map (kbd "C-c C-d") 'plisp-describe-symbol)
 (define-key plisp-mode-map (kbd "C-c C-r") 'plisp-repl)
 (define-key plisp-mode-map (kbd "C-c M-q") 'plisp-indent-region)
+(if plisp-use-inferior-plisp
+    (progn
+      (define-key plisp-mode-map (kbd "M-C-x") 'inferior-plisp-send-definition)
+      (define-key plisp-mode-map (kbd "C-x C-e") 'inferior-plisp-send-last-sexp)
+      (define-key plisp-mode-map (kbd "C-c C-e") 'inferior-plisp-send-definition)
+      (define-key plisp-mode-map (kbd "C-c M-e") 'inferior-plisp-send-definition-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-r") 'inferior-plisp-send-region)
+      (define-key plisp-mode-map (kbd "C-c M-r") 'inferior-plisp-send-region-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-x") 'inferior-plisp-switch-to-picolisp)))
 
 (defvar plisp-repl-mode-map (make-sparse-keymap))
 (define-key plisp-repl-mode-map (kbd "C-c C-d") 'plisp-describe-symbol)
+(if plisp-use-inferior-plisp
+    (progn
+      (define-key plisp-repl-mode-map (kbd "M-C-x") 'inferior-plisp-send-definition)
+      (define-key plisp-repl-mode-map (kbd "C-x C-e") 'inferior-plisp-send-last-sexp)
+      (define-key plisp-mode-map (kbd "C-c C-e") 'inferior-plisp-send-definition)
+      (define-key plisp-mode-map (kbd "C-c M-e") 'inferior-plisp-send-definition-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-r") 'inferior-plisp-send-region)
+      (define-key plisp-mode-map (kbd "C-c M-r") 'inferior-plisp-send-region-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-x") 'inferior-plisp-switch-to-picolisp)))
+
 
 ;; http://software-lab.de/doc/ref.html#fun
 
@@ -440,6 +522,12 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
       ["Comment region" (plisp-comment-region) :keys "C-c C-;"]
       ["Uncomment region" (plisp-uncomment-region) :keys "C-c C-:"]
       ["Indent region" (plisp-indent-region) :keys "C-c M-q"]
+      ,@(if plisp-use-inferior-plisp
+            (list
+             ["Send last sexp" (inferior-plisp-send-last-sexp) :keys "C-x C-e"]
+             ["Send definition" (inferior-plisp-send-definition) :keys "M-C-x"]
+             ["Send definition and go" (inferior-plisp-send-definition-and-go) :keys "C-c M-e"]
+             ["Switch to *picolisp* buffer" (inferior-plisp-switch-to-picolisp) :keys "C-c C-x"]))
       ["PicoLisp REPL" (plisp-repl) :keys "C-c C-r"]
       ["Customize" (customize-group 'plisp) t])))
 
@@ -804,18 +892,20 @@ specified by `plisp-documentation-method'."
 
 ;;;###autoload
 (defun plisp-support-ob-picolisp ()
-  "Enable (reachback) support for `ob-picolisp'."
+  "Enable editing of Org Babel PicoLisp source blocks with `plisp-mode'."
   (interactive)
-  (cond ((not (boundp 'inferior-plisp-provide-inferior-picolisp))
-         (error "Please ensure that the `inferior-plisp' feature is provided"))
-        (inferior-plisp-provide-inferior-picolisp
-         (defalias 'picolisp-mode 'plisp-mode)
-         (provide 'picolisp-mode))
-        (t (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'"))))
+  (if plisp-provide-picolisp-mode
+      (cond ((not (boundp 'inferior-plisp-provide-inferior-picolisp))
+             (error "Please ensure that the `inferior-plisp' feature is provided"))
+            (inferior-plisp-provide-inferior-picolisp
+             (defalias 'picolisp-mode 'plisp-mode)
+             (provide 'picolisp-mode))
+            (t (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))))
 
 
 ;; --
 
+(plisp-support-ob-picolisp)
 (provide 'plisp-mode)
 
 ;;; plisp-mode.el ends here
