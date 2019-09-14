@@ -78,6 +78,13 @@ provide the `inferior-picolisp' feature."
   :type 'boolean
   :group 'inferior-plisp)
 
+(defcustom inferior-plisp-source-modes '(plisp-mode picolisp-mode)
+  "List of modes which indicate a buffer contains PicoLisp source code.
+
+Used by `inferior-plisp-load-file' to determine defaults."
+  :type '(repeat function)
+  :group 'inferior-plisp )
+
 (defvar inferior-plisp-picolisp-buffer nil
   "The current PicoLisp process buffer.
 
@@ -109,6 +116,11 @@ thing. If you run multiple processes, you can change
 
 (defvar inferior-plisp--emacs-as-editor-p nil
   "If non-nil, use `eedit.l' instead of `edit.l'.")
+
+(defvar inferior-plisp--previous-load nil
+  "Caches the last (directory . file) pair used by `inferior-plisp-load-file'.
+
+Used for determining the default in the next call to that function.")
 
 
 ;;
@@ -223,6 +235,20 @@ command to run."
   (save-window-excursion
     (inferior-plisp-run-picolisp
      (read-string "Run PicoLisp: " inferior-plisp--command-line))))
+
+(defun inferior-plisp-load-file (file-name)
+  "Load PicoLisp file FILE-NAME into the inferior PicoLisp process."
+  (interactive
+   (comint-get-source  "Load PicoLisp file: "
+                       inferior-plisp--previous-load
+                       inferior-plisp-source-modes
+                       t)) ; `t' to indicate the file must already exist
+  (comint-check-source file-name)
+  (setq inferior-plisp--previous-load
+        (cons (file-name-directory file-name)
+              (file-name-nondirectory file-name)))
+  (comint-send-string
+   (inferior-plisp--picolisp-process) (concat "(load \"" file-name "\")\n")))
 
 ;;;###autoload
 (defun inferior-plisp-run-picolisp (cmd)
