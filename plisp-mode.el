@@ -128,6 +128,9 @@
 ;; * `C-c M-r' : Send the region to the inferior PicoLisp process and
 ;;   switch to its buffer (`inferior-plisp-send-region-and-go').
 
+;; * `C-c C-l' : Load a PicoLisp file into the inferior PicoLisp
+;;   process (`inferior-plisp-load-file')."
+
 ;; * `C-c C-x' : Switch to the inferior PicoLisp buffer
 ;;   (`inferior-plisp-switch-to-picolisp').
 
@@ -418,6 +421,7 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
       (define-key plisp-mode-map (kbd "C-c M-e") 'inferior-plisp-send-definition-and-go)
       (define-key plisp-mode-map (kbd "C-c C-r") 'inferior-plisp-send-region)
       (define-key plisp-mode-map (kbd "C-c M-r") 'inferior-plisp-send-region-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-l") 'inferior-plisp-load-file)
       (define-key plisp-mode-map (kbd "C-c C-x") 'inferior-plisp-switch-to-picolisp)))
 
 (defvar plisp-repl-mode-map (make-sparse-keymap))
@@ -430,6 +434,7 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
       (define-key plisp-mode-map (kbd "C-c M-e") 'inferior-plisp-send-definition-and-go)
       (define-key plisp-mode-map (kbd "C-c C-r") 'inferior-plisp-send-region)
       (define-key plisp-mode-map (kbd "C-c M-r") 'inferior-plisp-send-region-and-go)
+      (define-key plisp-mode-map (kbd "C-c C-l") 'inferior-plisp-load-file)
       (define-key plisp-mode-map (kbd "C-c C-x") 'inferior-plisp-switch-to-picolisp)))
 
 
