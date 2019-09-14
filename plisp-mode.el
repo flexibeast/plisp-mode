@@ -267,19 +267,9 @@
   "PicoLisp support."
   :group 'languages)
 
-(defcustom plisp-picolisp-executable "/usr/bin/picolisp"
-  "Absolute path of the `picolisp' executable."
-  :type '(file :must-match t)
-  :group 'plisp)
-
-(defcustom plisp-pil-executable "/usr/bin/pil"
-  "Absolute path of the `pil' executable."
-  :type '(file :must-match t)
-  :group 'plisp)
-
-(defcustom plisp-pilindent-executable "/usr/bin/pilIndent"
-  "Absolute path of the `pilIndent' executable."
-  :type '(file :must-match t)
+(defcustom plisp-disable-slime-p t
+  "Whether to disable SLIME modes in `plisp-mode' buffers."
+  :type 'boolean
   :group 'plisp)
 
 (defcustom plisp-documentation-directory "/usr/share/doc/picolisp/"
@@ -304,6 +294,21 @@ the system, and cannot be installed, setting this to `t' will prevent
   :type 'boolean
   :group 'plisp)
 
+(defcustom plisp-picolisp-executable "/usr/bin/picolisp"
+  "Absolute path of the `picolisp' executable."
+  :type '(file :must-match t)
+  :group 'plisp)
+
+(defcustom plisp-pil-executable "/usr/bin/pil"
+  "Absolute path of the `pil' executable."
+  :type '(file :must-match t)
+  :group 'plisp)
+
+(defcustom plisp-pilindent-executable "/usr/bin/pilIndent"
+  "Absolute path of the `pilIndent' executable."
+  :type '(file :must-match t)
+  :group 'plisp)
+
 (defcustom plisp-provide-picolisp-mode t
   "Compatibility option for `ob-picolisp'.
 
@@ -313,11 +318,6 @@ PicoLisp source blocks via `org-edit-special'.
 
 Set this to `nil' to if you wish to use another package to
 provide the `picolisp-mode' feature to `ob-picolisp'."
-  :type 'boolean
-  :group 'plisp)
-
-(defcustom plisp-use-inferior-plisp t
-  "Whether to enable `inferior-plisp' functionality."
   :type 'boolean
   :group 'plisp)
 
@@ -332,8 +332,8 @@ Must be `t' to access documentation via `plisp-describe-symbol'."
   :type 'boolean
   :group 'plisp)
 
-(defcustom plisp-disable-slime-p t
-  "Whether to disable SLIME modes in `plisp-mode' buffers."
+(defcustom plisp-use-inferior-plisp t
+  "Whether to enable `inferior-plisp' functionality."
   :type 'boolean
   :group 'plisp)
 
