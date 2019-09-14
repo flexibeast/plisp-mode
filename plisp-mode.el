@@ -892,15 +892,15 @@ specified by `plisp-documentation-method'."
 
 ;;;###autoload
 (defun plisp-support-ob-picolisp ()
-  "Enable editing of Org Babel PicoLisp source blocks with `plisp-mode'."
+  "Enable editing of Org Babel PicoLisp source blocks with `plisp-mode'.
+
+Needs `plisp-provide-picolisp-mode' set to `t'."
   (interactive)
   (if plisp-provide-picolisp-mode
-      (cond ((not (boundp 'inferior-plisp-provide-inferior-picolisp))
-             (error "Please ensure that the `inferior-plisp' feature is provided"))
-            (inferior-plisp-provide-inferior-picolisp
-             (defalias 'picolisp-mode 'plisp-mode)
-             (provide 'picolisp-mode))
-            (t (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))))
+      (progn
+        (provide 'picolisp-mode) 
+        (defalias 'picolisp-mode 'plisp-mode))
+    (t (error "Unable to support ob-picolisp: please ensure 'plisp-provide-picolisp-mode' is set to 't'"))))
 
 
 ;; --
