@@ -314,15 +314,14 @@ then switch to the process buffer."
 
 ;;;###autoload
 (defun inferior-plisp-support-ob-picolisp ()
-  "Enable support for `ob-picolisp'.
+  "Enable Org Babel session support.
 
 Needs `inferior-picolisp-provide-inferior-picolisp' set to `t'."
   (interactive)
   (if inferior-plisp-provide-inferior-picolisp
       (progn
         (provide 'inferior-picolisp)
-        (defalias 'run-picolisp 'inferior-plisp-run-picolisp)
-        (plisp-support-ob-picolisp))
+        (defalias 'run-picolisp 'inferior-plisp-run-picolisp))
     (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))
 
 (defun inferior-plisp-switch-to-picolisp (eob-p)
