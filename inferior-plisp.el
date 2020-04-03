@@ -346,6 +346,8 @@ Needs `inferior-picolisp-provide-inferior-picolisp' set to `t'."
   (interactive)
   (if inferior-plisp-provide-inferior-picolisp
       (progn
+        ;; We use `quote' here for Emacsmirror:
+        ;; https://github.com/flexibeast/plisp-mode/pull/13
         (provide (quote inferior-picolisp))
         (defalias 'run-picolisp 'inferior-plisp-run-picolisp))
     (error "Unable to support ob-picolisp: please ensure 'inferior-plisp-provide-inferior-picolisp' is set to 't'")))
