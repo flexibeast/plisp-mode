@@ -48,6 +48,11 @@
   "Run a PicoLisp process in a buffer."
   :group 'picolisp)
 
+(defcustom inferior-plisp-command-line "/usr/bin/pil +"
+  "Command line for calling an inferior PicoLisp process."
+  :type 'string
+  :group 'inferior-plisp)
+
 (defcustom inferior-plisp-filter-regexp "\\`\\s *\\S ?\\S ?\\s *\\'"
   "Input matching this regexp are not saved on the history list.
 
@@ -111,8 +116,6 @@ thing. If you run multiple processes, you can change
 ;;
 ;; Internal variables.
 ;;
-
-(defvar inferior-plisp--command-line "/usr/bin/pil +")
 
 (defvar inferior-plisp--emacs-as-editor-p nil
   "If non-nil, use `eedit.l' instead of `edit.l'.")
@@ -234,7 +237,7 @@ Since this command is run implicitly, always ask the user for the
 command to run."
   (save-window-excursion
     (inferior-plisp-run-picolisp
-     (read-string "Run PicoLisp: " inferior-plisp--command-line))))
+     (read-string "Run PicoLisp: " inferior-plisp-command-line))))
 
 (defun inferior-plisp-load-file (file-name)
   "Load PicoLisp file FILE-NAME into the inferior PicoLisp process."
@@ -258,7 +261,7 @@ If there is a process already running in `*picolisp*', switch to
 that buffer.
 
 With argument, allows you to edit the command line; default is value
-of `inferior-plisp--command-line'.
+of `inferior-plisp-command-line'.
 
 Runs the hook `inferior-plisp-mode-hook' (after the `comint-mode-hook'
 is run)."
@@ -266,8 +269,8 @@ is run)."
   (interactive (list
                 (if current-prefix-arg
                     (read-string "Run PicoLisp: "
-                                 inferior-plisp--command-line)
-                  inferior-plisp--command-line)))
+                                 inferior-plisp-command-line)
+                  inferior-plisp-command-line)))
   (message "Using `run-picolisp' from `inferior-plisp'.")
   (when (not (comint-check-proc "*picolisp*"))
     (let ((cmdlist (split-string cmd)))
@@ -290,7 +293,7 @@ is run)."
                  (cons "@lib/edit.l" (cdr cmdlist))))))
       (inferior-plisp--reset-line-editor)
       (inferior-plisp-mode)))
-  (setq inferior-plisp--command-line cmd)
+  (setq inferior-plisp-command-line cmd)
   (setq inferior-plisp-picolisp-buffer "*picolisp*")
   (pop-to-buffer "*picolisp*"))
 
