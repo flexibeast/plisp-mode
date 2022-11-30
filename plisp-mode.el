@@ -2,7 +2,7 @@
 
 ;; Copyright (C) 2014-2019  Alexis <flexibeast@gmail.com>
 
-;; Author: Alexis <flexibeast@gmail.com>
+;; Author: Alexis <flexibeast@gmail.com> (plisp-mode.el); Guillermo R. Palavecine <grpala@gmail.com>, Thorsten Jolitz <tjolitz@gmail.com>, Alexis <flexibeast@gmail.com> (inferior-plisp.el)
 ;; Maintainer: Alexis <flexibeast@gmail.com>
 ;; Created: 2014-11-18
 ;; URL: https://github.com/flexibeast/plisp-mode
@@ -28,6 +28,10 @@
 
 ;;; Commentary:
 
+;; *This project is currently unmaintained, and needs a new
+;; maintainer. If you wish to take maintainership, please email
+;; Alexis.*
+
 ;; `plisp-mode' provides a major mode for PicoLisp programming.
 
 ;; The `plisp-mode' in this package has been built from scratch, and
@@ -37,8 +41,6 @@
 ;; recently [updated version of that
 ;; support](https://github.com/tj64/picolisp-mode). At this stage, the
 ;; main advantages provided by this package are:
-
-;; * an actively maintained and supported system;
 
 ;; * access to the PicoLisp reference documentation, including via
 ;;   Eldoc;
