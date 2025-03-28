@@ -612,7 +612,7 @@ looked up."
                       (switch-to-buffer bfr)
                       (insert-file-contents doc)
                       (libxml-parse-html-region (point-min) (point-max)))))
-          (setq dl (nth 5 (nth 3 dom)))
+          (setq dl (nth 5 (nth 3 (nth 3 dom))))
           (kill-buffer bfr)))
     dl))
 
